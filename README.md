@@ -1,10 +1,10 @@
-rOCCI - A Ruby OCCI Framework
+rOCCI-cli - A Ruby OCCI Framework
 =================================
 
-[![Build Status](https://secure.travis-ci.org/gwdg/rOCCI.png)](http://travis-ci.org/gwdg/rOCCI)
-[![Dependency Status](https://gemnasium.com/gwdg/rOCCI.png)](https://gemnasium.com/gwdg/rOCCI)
-[![Gem Version](https://fury-badge.herokuapp.com/rb/occi.png)](https://badge.fury.io/rb/occi)
-[![Code Climate](https://codeclimate.com/github/gwdg/rOCCI.png)](https://codeclimate.com/github/gwdg/rOCCI)
+[![Build Status](https://secure.travis-ci.org/gwdg/rOCCI-cli.png)](http://travis-ci.org/gwdg/rOCCI-cli)
+[![Dependency Status](https://gemnasium.com/gwdg/rOCCI-cli.png)](https://gemnasium.com/gwdg/rOCCI-cli)
+[![Gem Version](https://fury-badge.herokuapp.com/rb/occi-cli.png)](https://badge.fury.io/rb/occi-cli)
+[![Code Climate](https://codeclimate.com/github/gwdg/rOCCI-cli.png)](https://codeclimate.com/github/gwdg/rOCCI-cli)
 
 Requirements
 ------------
@@ -18,13 +18,13 @@ The following setup is recommended
 * Ruby 1.9.3
 * RubyGems installed
 
-The following libraries / packages may be required to use rOCCI
+The following libraries / packages may be required to use rOCCI-cli
 
 * libxslt-dev
 * libxml2-dev
 * **only if using Ruby 1.8.7:** libonig-dev (Linux) or oniguruma (Mac)
 
-To use rOCCI with Java, you need JRE 6 or 7. To build rOCCI for Java, you need JDK 6 or 7.
+To use rOCCI-cli with Java, you need JRE 6 or 7. To build rOCCI-cli for Java, you need JDK 6 or 7.
 
 Installation
 ------------
@@ -34,15 +34,15 @@ doc/macosx.md.](doc/macosx.md)**
 
 To install the most recent stable version
 
-    gem install occi
+    gem install occi-cli
 
 To install the most recent beta version
 
-    gem install occi --pre
+    gem install occi-cli --pre
 
 ### Installation from source
 
-To use rOCCI from source it is very much recommended to use RVM. [Install RVM](https://rvm.io/rvm/install/) with
+To use rOCCI-cli from source it is very much recommended to use RVM. [Install RVM](https://rvm.io/rvm/install/) with
 
     curl -L https://get.rvm.io | bash -s stable --ruby
 
@@ -50,10 +50,10 @@ To use rOCCI from source it is very much recommended to use RVM. [Install RVM](h
 
 To build and install the bleeding edge version from master
 
-    git clone git://github.com/gwdg/rOCCI.git
-    cd rOCCI
+    git clone git://github.com/gwdg/rOCCI-cli.git
+    cd rOCCI-cli
     rvm install ruby-1.9.3
-    rvm --create --ruby-version use 1.9.3@rOCCI
+    rvm --create --ruby-version use 1.9.3@rOCCI-cli
     bundle install --deployment
     rake install
 
@@ -61,10 +61,10 @@ To build and install the bleeding edge version from master
 
 To build a Java jar file from master use
 
-    git clone git://github.com/gwdg/rOCCI.git
-    cd rOCCI
+    git clone git://github.com/gwdg/rOCCI-cli.git
+    cd rOCCI-cli
     rvm install jruby-1.7.1
-    rvm --create --ruby-version use jruby-1.7.1@rOCCI
+    rvm --create --ruby-version use jruby-1.7.1@rOCCI-cli
     gem install bundler
     bundle install
     warble
@@ -123,271 +123,6 @@ To create a compute resource with mixins use
 To delete a compute resource use
 
     occi --endpoint https://<ENDPOINT>:<PORT>/ --action delete --resource /compute/<OCCI_ID> --auth x509
-
-### Client scripting
-
-#### Auth
-
-For Basic auth use
-
-    auth = Hashie::Mash.new
-    auth.type = 'basic'
-    auth.username = 'user'
-    auth.password = 'mypass'
- 
-For Digest auth use
-
-    auth = Hashie::Mash.new
-    auth.type = 'digest'
-    auth.username = 'user'
-    auth.password = 'mypass'
-
-For X.509 auth use
- 
-    auth = Hashie::Mash.new
-    auth.type = 'x509'
-    auth.user_cert = '/Path/To/My/usercert.pem'
-    auth.user_cert_password = 'MyPassword'
-    auth.ca_path = '/Path/To/root-certificates'
-
-**Deprecated:** For keystone auth use
-
-    auth = Hashie::Mash.new
-    auth.type = 'keystone'
-    auth.token = '887665443383838'
-
-#### DSL
-In your scripts, you can use the OCCI client DSL.
-
-To include the DSL definitions in a script use
-
-    extend Occi::Api::Dsl
-
-To include the DSL definitions in a class use
-
-    include Occi::Api:Dsl
-
-To connect to an OCCI endpoint/server (e.g. running on http://localhost:3300/ )
-
-    # defaults
-    options = {
-      :endpoint => "http://localhost:3300/",
-      :auth => {:type => "none"},
-      :log => {:out => STDERR, :level => Occi::Log::WARN, :logger => nil},
-      :auto_connect => "value", auto_connect => true,
-      :media_type => nil
-    }
-
-    connect(:http, options ||= {})
-
-To get the list of available resource, mixin, entity or link types use
-
-    resource_types
-    mixin_types
-    entity_types
-    link_types
-
-To get compute, storage or network descriptions use
-
-    describe "compute"
-    describe "storage"
-    describe "network"
-
-To get the location of compute, storage or network resources use
-
-    list "compute"
-    list "storage"
-    list "network"
-
-To get the identifiers of specific mixins in specific mixin types use
-
-    mixin "my_template", "os_tpl"
-    mixin "small", "resource_tpl"
-
-To get the identifiers of specific mixins with unknown types use
-
-    mixin "medium"
-
-To get mixin descriptions use
-
-    mixin "medium", nil, true
-    mixin "my_template", "os_tpl", true
-
-To get a list of names of all / OS templates / Resource templates mixins use
-
-    mixins
-    mixins "os_tpl"
-    mixins "resource_tpl"
-
-To create a new compute resource use
-
-    os = mixin 'my_os', 'os_tpl'
-    size = mixin 'large', 'resource_tpl'
-    cmpt = resource "compute"
-    cmpt.mixins << os << size
-    cmpt.title = "My VM"
-    create cmpt
-
-To get a description of a specific resource use
-
-    describe "/compute/<OCCI_ID>"
-    describe "/storage/<OCCI_ID>"
-    describe "/network/<OCCI_ID>"
-
-To delete a specific resource use
-
-    delete "/compute/<OCCI_ID>"
-    delete "/storage/<OCCI_ID>"
-    delete "/network/<OCCI_ID>"
-
-#### API
-If you need low level access to parts of the OCCI client or need to use more than one instance
-at a time, you should use the OCCI client API directly.
-
-To connect to an OCCI endpoint/server (e.g. running on http://localhost:3300/ )
-
-    # defaults
-    options = {
-      :endpoint => "http://localhost:3300/",
-      :auth => {:type => "none"},
-      :log => {:out => STDERR, :level => Occi::Log::WARN, :logger => nil},
-      :auto_connect => "value", auto_connect => true,
-      :media_type => nil
-    }
-
-    client = Occi::Api::Client::ClientHttp.new(options ||= {})
-
-All available categories are automatically registered to the OCCI model during client initialization. You can get them via
-
-    client.model
-
-To get the list of available resource, mixin, entity or link types use
-
-    client.get_resource_types
-    client.get_mixin_types
-    client.get_entity_types
-    client.get_link_types
-
-To get compute, storage or network descriptions use
-
-    client.describe "compute"
-    client.describe "storage"
-    client.describe "network"
-
-To get the location of compute, storage or network resources use
-
-    client.list "compute"
-    client.list "storage"
-    client.list "network"
-
-To get the identifiers of specific mixins in specific mixin types use
-
-    client.find_mixin "my_template", "os_tpl"
-    client.find_mixin "small", "resource_tpl"
-
-To get the identifiers of specific mixins with unknown types use
-
-    client.find_mixin "medium"
-
-To get mixin descriptions use
-
-    client.find_mixin "medium", nil, true
-    client.find_mixin "my_template", "os_tpl", true
-
-To get a list of names of all / OS templates / Resource templates mixins use
-
-    client.get_mixins
-    client.get_mixins "os_tpl"
-    client.get_mixins "resource_tpl"
-
-To create a new compute resource use
-
-    os = client.find_mixin 'my_os', 'os_tpl'
-    size = client.find_mixin 'large', 'resource_tpl'
-    cmpt = client.get_resource "compute"
-    cmpt.mixins << os << size
-    cmpt.title = "My VM"
-    client.create cmpt
-
-To get a description of a specific resource use
-
-    client.describe "/compute/<OCCI_ID>"
-    client.describe "/storage/<OCCI_ID>"
-    client.describe "/network/<OCCI_ID>"
-
-To delete a specific resource use
-
-    client.delete "/compute/<OCCI_ID>"
-    client.delete "/storage/<OCCI_ID>"
-    client.delete "/network/<OCCI_ID>"
-
-#### Logging
-
-The OCCI gem includes its own logging mechanism using a message queue. By default, no one is listening to that queue.
-A new OCCI Logger can be initialized by specifying the log destination (either a filename or an IO object like
-STDOUT) and the log level.
-
-    Occi::Log.new(STDOUT,Occi::Log::INFO)
-
-You can create multiple Loggers to receive the log output.
-
-You can always, even if there is no logger defined, log output using the class methods of OCCI::Log e.g.
-
-    Occi::Log.info("Test message")
-
-#### Registering categories in the OCCI Model
-
-Before the parser may be used, the available categories have to be registered in the OCCI Model.
-
-For categories already specified by the OCCI WG a method exists in the OCCI Model class to register them:
-
-    model = Occi::Model.new
-    model.register_infrastructure
-
-Further categories can either be registered from files which include OCCI collections in JSON formator or from parsed
- JSON objects (e.g. from the query interface of an OCCI service endpoint).
-
-#### Parsing OCCI messages
-
-The OCCI gem includes a Parser to easily parse OCCI messages. With a given media type (e.g. json,
-xml or plain text) the parser analyses the content of the message body and, if supplied,
-the message header. As the text/plain and text/occi media type do not clearly distinguish between a message with a
-category and a message with an entity which has a kind, it has to be specified if the message contains a category (e
-.g. for user defined mixins)
-
-OCCI messages can be parsed to an OCCI collection for example like
-
-    media_type = 'text/plain'
-    body = %Q|Category: compute; scheme="http://schemas.ogf.org/occi/infrastructure#"; class="kind"|
-    collection=Occi::Parser.parse(media_type, body)
-
-#### Parsing OVF / OVA files
-
-Parsing of OVF/OVA files is partly supported and will be improved in future versions.
-
-The example in [DMTF DSP 2021](http://www.dmtf.org/sites/default/files/standards/documents/DSP2021_1.0.0.tar) is
-bundled with rOCCI and can be parsed to an OCCI collection with
-
-    require 'open-uri'
-    ova=open 'https://raw.github.com/gwdg/rOCCI/master/spec/occi/test.ova'
-    collection=Occi::Parser.ova(ova.read)
-
-Currently only the following entries of OVF files are parsed
-
-* File in References
-* Disk in the DiskSection
-* Network in the NetworkSection
-* in the VirutalSystemSection:
-** Info
-** in the VirtualHardwareSection the items regarding
-*** Processor
-*** Memory
-*** Ethernet Adapter
-*** Parallel port
-
-### Using the OCCI model
-
-The OCCI gem includes all OCCI Core classes necessary to handly arbitrary OCCI objects.
 
 Changelog
 ---------
@@ -449,11 +184,11 @@ Development
 
 Checkout latest version from GIT:
 
-    git clone git://github.com/gwdg/rOCCI.git
+    git clone git://github.com/gwdg/rOCCI-cli.git
 
-Change to rOCCI folder
+Change to rOCCI-cli folder
 
-    cd rOCCI
+    cd rOCCI-cli
 
 Install dependencies for deployment
 
@@ -461,11 +196,11 @@ Install dependencies for deployment
 
 ### Code Documentation
 
-[Code Documentation for rOCCI by YARD](http://rubydoc.info/github/gwdg/rOCCI/)
+[Code Documentation for rOCCI-cli by YARD](http://rubydoc.info/github/gwdg/rOCCI-cli/)
 
 ### Continuous integration
 
-[Continuous integration for rOCCI by Travis-CI](http://travis-ci.org/gwdg/rOCCI/)
+[Continuous integration for rOCCI-cli by Travis-CI](http://travis-ci.org/gwdg/rOCCI-cli/)
 
 ### Contribute
 
