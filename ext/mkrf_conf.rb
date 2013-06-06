@@ -24,14 +24,8 @@ if RUBY_PLATFORM == "java"
     inst.install "jruby-openssl"
   end
 else
-  warn 'Installing dependencies specific for Ruby'
-
-  rver = RUBY_VERSION.split('.').map{ |elm| elm.to_i }
-  if rver[0] == 1 && rver[1] < 9
-    warn 'Installing \'oniguruma\' for Ruby 1.8.x'
-    warn 'Make sure you have \'libonig-dev\' installed!'
-    inst.install "oniguruma"
-  end
+  # Nothing to install for rOCCI-api here
+  #warn 'Installing dependencies specific for Ruby'
 end
 
 # create dummy rakefile to indicate success
