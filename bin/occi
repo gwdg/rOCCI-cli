@@ -15,20 +15,15 @@
 #--------------------------------------------------------------------------- #
 
 require 'rubygems'
-require 'occi-api'
+require 'occi-cli'
 require 'pp'
 require 'highline/import'
 require 'openssl'
 
-# OcciOpts, ResourceOutputFactory and Helper are not part of the occi core required above
-require 'occi/bin/occi_opts'
-require 'occi/bin/resource_output_factory'
-require 'occi/bin/helpers'
-
 extend Occi::Api::Dsl
 
 # get arguments and validate/parse them to an ostruct
-options = Occi::Bin::OcciOpts.parse ARGV
+options = Occi::Cli::OcciOpts.parse ARGV
 
 # initialize logger
 logger = Occi::Log.new(options.log[:out])
@@ -36,7 +31,7 @@ logger.level = options.log[:level]
 options.log[:logger] = logger
 
 # initialize output factory
-output = Occi::Bin::ResourceOutputFactory.new options.output_format
+output = Occi::Cli::ResourceOutputFactory.new options.output_format
 
 Occi::Log.info "Starting OCCI client ..."
 Occi::Log.debug "Options: #{options}"
@@ -150,7 +145,7 @@ begin
     options.resource = nil
 
     # offer just the resource types we will be able to process
-    menu_resources = Occi::Bin::ResourceOutputFactory.allowed_resource_types
+    menu_resources = Occi::Cli::ResourceOutputFactory.allowed_resource_types
 
     # separate menus from each other
     say("\n")

@@ -1,16 +1,11 @@
-# make sure the local files will be loaded first;
-# this should prevent installed versions of this
-# gem to be included in the testing process
-$:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-$:.unshift(File.dirname(__FILE__))
+require 'rubygems'
+require 'occi-cli'
 
 # enable coverage reports
 if ENV['COVERAGE']
   require 'simplecov'
   SimpleCov.start
 end
-
-require 'occi-api'
 
 RSpec.configure do |c|
   # in RSpec 3 this will no longer be necessary.

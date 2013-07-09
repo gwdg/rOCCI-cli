@@ -1,25 +1,22 @@
-require 'rspec'
-require 'occi/bin/occi_opts'
-
 module Occi
-  module Bin
+  module Cli
     describe OcciOpts do
 
       it "terminates without arguments" do
-      	expect{Occi::Bin::OcciOpts.parse [], true}.to raise_error(SystemExit)
+      	expect{Occi::Cli::OcciOpts.parse [], true}.to raise_error()
       end
 
       it "terminates when it encounters an unknown argument" do
-        expect{Occi::Bin::OcciOpts.parse ["--non-existent", "fake"], true}.to raise_error(SystemExit)
+        expect{Occi::Cli::OcciOpts.parse ["--non-existent", "fake"], true}.to raise_error()
       end
 
       it "parses minimal number of required arguments without errors" do
-        expect{Occi::Bin::OcciOpts.parse ["--resource", "compute", "--action", "list"], true}.not_to raise_error(SystemExit)
+        expect{Occi::Cli::OcciOpts.parse ["--resource", "compute", "--action", "list"], true}.not_to raise_error()
       end
 
       it "parses resource and action arguments without errors" do
         begin
-          parsed = Occi::Bin::OcciOpts.parse ["--resource", "compute", "--action", "list"], true
+          parsed = Occi::Cli::OcciOpts.parse ["--resource", "compute", "--action", "list"], true
         rescue SystemExit
           fail
         end
