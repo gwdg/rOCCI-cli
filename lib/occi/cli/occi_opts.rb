@@ -39,7 +39,7 @@ module Occi::Cli
       options.auth[:ca_path] = "/etc/grid-security/certificates"
       options.auth[:username] = "anonymous"
       options.auth[:ca_file] = nil
-      options.auth[:proxy_ca] = nil
+      options.auth[:voms] = nil
 
       options.output_format = :plain
 
@@ -101,10 +101,9 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
         opts.on("-p",
                 "--password PASSWORD",
                 String,
-                "Password for basic, digest and x509 authentication or an auth. token from OS Keystone") do |password|
+                "Password for basic, digest and x509 authentication") do |password|
           options.auth[:password] = password
           options.auth[:user_cert_password] = password
-          options.auth[:token] = password
         end
 
         opts.on("-c",
@@ -145,13 +144,10 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
         end
 
         opts.on("-X",
-                "--proxy-ca FILE",
-                String,
-                "Path to a file with GSI proxy's CA certificate(s)") do |proxy_ca|
-          raise ArgumentError, "File specified in --proxy-ca is not a file!" unless File.file? proxy_ca
-          raise ArgumentError, "File specified in --proxy-ca is not readable!" unless File.readable? proxy_ca
+                "--voms",
+                "Using VOMS credentials; modifies behavior of the X509 authN module") do |voms|
 
-          options.auth[:proxy_ca] = proxy_ca
+          options.auth[:voms] = true
         end
 
         opts.on("-y",
@@ -327,6 +323,16 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
           exit false
         else
           puts "You cannot use '--filter' without '--dump-model'!"
+          puts opts
+          exit!
+        end
+      end
+
+      if options.voms && options.auth[:type] != "x509"
+        if @@quiet
+          exit false
+        else
+          puts "You cannot use '--voms' without '--auth x509'!"
           puts opts
           exit!
         end
