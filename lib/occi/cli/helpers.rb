@@ -16,7 +16,7 @@ def helper_list(options, output = nil)
 
   return found if output.nil?
 
-  if Occi::Bin::ResourceOutputFactory.allowed_resource_types.include? options.resource.to_sym
+  if Occi::Cli::ResourceOutputFactory.allowed_resource_types.include? options.resource.to_sym
     puts output.format(found, :locations, options.resource.to_sym)
   else
     Occi::Log.warn "Not printing, the resource type is not supported!"
@@ -66,7 +66,7 @@ def helper_describe(options, output = nil)
     resource_type = options.resource.to_sym
   end
 
-  if Occi::Bin::ResourceOutputFactory.allowed_resource_types.include? resource_type
+  if Occi::Cli::ResourceOutputFactory.allowed_resource_types.include? resource_type
     puts output.format(found, :resources, resource_type)
   else
     Occi::Log.warn "Not printing, the resource type [#{resource_type.to_s}] is not supported!"

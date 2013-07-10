@@ -1,8 +1,5 @@
-require 'rspec'
-require 'occi/bin/helpers'
-
 # module Occi
-#   module Bin
+#   module Cli
 #     describe Helpers do
 
 #       it "does something"
