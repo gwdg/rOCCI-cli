@@ -203,9 +203,10 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
                 "--mixin NAME",
                 String,
                 "Type and name of the mixin as TYPE#NAME (e.g. os_tpl#monitoring, resource_tpl#medium)") do |mixin|
-          parts = mixin.split("#")
+          parts = /^(\S+?)#(\S+)$/.match(mixin)
+          raise "Unknown mixin format! Use TYPE#NAME!" unless parts
 
-          raise "Unknown mixin format! Use TYPE#NAME!" unless parts.length == 2
+          parts = parts.to_a.drop(1)
 
           options.mixins = {} if options.mixins.nil?
           options.mixins[parts[0]] = [] if options.mixins[parts[0]].nil?
