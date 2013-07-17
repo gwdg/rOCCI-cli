@@ -1,8 +1,7 @@
-<%# We always get a JSON %>
+<%- # We always get a JSON -%>
 STORAGE:
-  ID:           <%= json_resource.resources.first.attributes.occi.core.id %>
-  TITLE:        <%= json_resource.resources.first.attributes.occi.core.title %>
-  STATE:        <%= json_resource.resources.first.attributes.occi.storage.state%>
-  DESCRIPTION:  <%= json_resource.resources.first.attributes.occi.core.summary %>
-
+  ID:           <%= attributes.occi.core.id %>
+  TITLE:        <%= attributes.occi.core.title %>
+  STATE:        <%= attributes.occi.storage.state%>
+  DESCRIPTION:  <%= attributes.occi.core.summary %>
 

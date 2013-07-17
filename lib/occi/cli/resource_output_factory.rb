@@ -54,13 +54,22 @@ module Occi::Cli
     def self.resources_to_plain(occi_resources, resource_type)
       # using ERB templates for known resource and mixin types
       file = File.expand_path("..", __FILE__) + '/templates/' + resource_type.to_s + ".erb"
-      template = ERB.new File.new(file).read
+      template = ERB.new(File.new(file).read, nil, '-')
 
       formatted_output = ""
 
       occi_resources.each do |occi_resource|
         json_resource = occi_resource.as_json
-        formatted_output << template.result(binding) unless json_resource.nil? || json_resource.empty?
+        next unless json_resource
+
+        if json_resource.resources && json_resource.resources.first
+          attributes = json_resource.resources.first.attributes
+          next unless attributes && attributes.occi
+
+          links = json_resource.links || []
+        end
+
+        formatted_output << template.result(binding)
       end
 
       formatted_output

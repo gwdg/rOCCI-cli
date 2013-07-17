@@ -41,8 +41,6 @@ Occi::Log.debug "Options: #{options}"
 if options.auth[:password].nil? || options.auth[:user_cert_password].nil?
   Occi::Log.debug "Password is not set, asking for it now ..."
 
-  say("\n")
-
   options.auth[:user_cert_password] = ask("Enter a password: ") {
       |q| q.echo = false
   } unless options.auth[:type] == "none" || (options.auth[:voms] && options.auth[:type] == "x509")
