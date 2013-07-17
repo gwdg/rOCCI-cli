@@ -5,7 +5,7 @@ module Occi::Cli
 
   class ResourceOutputFactory
 
-    @@allowed_formats = [:json, :plain].freeze
+    @@allowed_formats = [:json, :plain, :json_pretty].freeze
     @@allowed_resource_types = [:compute, :storage, :network, :os_tpl, :resource_tpl].freeze
     @@allowed_data_types = [:locations, :resources].freeze
 
@@ -31,7 +31,7 @@ module Occi::Cli
       # construct method name from data type and output format
       method = (data_type.to_s + "_to_" + output_format.to_s).to_sym
 
-      ResourceOutputFactory.send method, data, resource_type
+      send method, data, resource_type
     end
 
     def self.allowed_formats
@@ -46,17 +46,22 @@ module Occi::Cli
       @@allowed_data_types
     end
 
-    def self.resources_to_json(occi_resources, resource_type)
-      # generate JSON document from an array of JSON objects 
-      JSON.generate occi_resources
+    def resources_to_json(occi_resources, resource_type)
+      # generate JSON document from an array of JSON objects
+      if @output_format == :json_pretty
+        JSON.pretty_generate occi_resources
+      else
+        JSON.generate occi_resources
+      end
     end
+    alias_method :resources_to_json_pretty, :resources_to_json
 
-    def self.resources_to_plain(occi_resources, resource_type)
+    def resources_to_plain(occi_resources, resource_type)
       # using ERB templates for known resource and mixin types
-      file = File.expand_path("..", __FILE__) + '/templates/' + resource_type.to_s + ".erb"
+      file = "#{File.expand_path('..', __FILE__)}/templates/#{resource_type.to_s}.erb"
       template = ERB.new(File.new(file).read, nil, '-')
 
-      formatted_output = ""
+      formatted_output = "\n"
 
       occi_resources.each do |occi_resource|
         json_resource = occi_resource.as_json
@@ -75,7 +80,7 @@ module Occi::Cli
       formatted_output
     end
 
-    def self.locations_to_json(url_locations, resource_type)
+    def locations_to_json(url_locations, resource_type)
       # give all locatios a common key and convert to JSON
       locations = { resource_type => [] }
 
@@ -84,19 +89,25 @@ module Occi::Cli
         locations[resource_type] << location
       end
 
-      locations.to_json
+      # generate JSON document from an array of strings
+      if @output_format == :json_pretty
+        JSON.pretty_generate locations
+      else
+        JSON.generate locations
+      end
     end
+    alias_method :locations_to_json_pretty, :locations_to_json
 
-    def self.locations_to_plain(url_locations, resource_type)
+    def locations_to_plain(url_locations, resource_type)
       # just an attempt to make the array more readable 
-      output = "\n" + resource_type.to_s.capitalize + " locations:\n"
+      output = "\n#{resource_type.to_s.capitalize} locations:\n"
 
       url_locations.each do |location|
         location = location.split("/").last if [:os_tpl, :resource_tpl].include? resource_type
         output << "\t" << location << "\n"
       end
 
-      output
+      "#{output}\n"
     end
 
   end

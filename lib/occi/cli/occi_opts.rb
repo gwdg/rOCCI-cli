@@ -282,7 +282,13 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
           if @@quiet
             exit true
           else
-            puts Occi::Cli::VERSION
+            if options.debug
+              puts "CLI:  #{Occi::Cli::VERSION}"
+              puts "API:  #{Occi::Api::VERSION}"
+              puts "Core: #{Occi::VERSION}"
+            else
+              puts Occi::Cli::VERSION
+            end
             exit! true
           end
         end
