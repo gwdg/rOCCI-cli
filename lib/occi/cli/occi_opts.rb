@@ -203,9 +203,10 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
                 "--mixin NAME",
                 String,
                 "Type and name of the mixin as TYPE#NAME (e.g. os_tpl#monitoring, resource_tpl#medium)") do |mixin|
-          parts = mixin.split("#")
+          parts = /^(\S+?)#(\S+)$/.match(mixin)
+          raise "Unknown mixin format! Use TYPE#NAME!" unless parts
 
-          raise "Unknown mixin format! Use TYPE#NAME!" unless parts.length == 2
+          parts = parts.to_a.drop(1)
 
           options.mixins = {} if options.mixins.nil?
           options.mixins[parts[0]] = [] if options.mixins[parts[0]].nil?
@@ -282,7 +283,13 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
           if @@quiet
             exit true
           else
-            puts Occi::Cli::VERSION
+            if options.debug
+              puts "CLI:  #{Occi::Cli::VERSION}"
+              puts "API:  #{Occi::Api::VERSION}"
+              puts "Core: #{Occi::VERSION}"
+            else
+              puts Occi::Cli::VERSION
+            end
             exit! true
           end
         end

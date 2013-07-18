@@ -1,18 +1,22 @@
-<%# We always get a JSON %>
+<%- # We always get a JSON -%>
 COMPUTE:
-  ID:       <%= json_resource.resources.first.attributes.occi.core.id %>
-  TITLE:    <%= json_resource.resources.first.attributes.occi.core.title %>
-  STATE:    <%= json_resource.resources.first.attributes.occi.compute.state %>
+  ID:       <%= attributes.occi.core.id %>
+  TITLE:    <%= attributes.occi.core.title || attributes.occi.compute.hostname %>
+  STATE:    <%= attributes.occi.compute.state %>
+  MEMORY:   <%= attributes.occi.compute.memory %> GB
+  CORES:    <%= attributes.occi.compute.cores %>
   LINKS:
-  <% if json_resource.links %><% json_resource.links.each do |link| %>
+  <%- links.each do |link| -%>
+    <%- next unless link && link.attributes -%>
+
     LINK "<%= link.kind %>":
       ID:          <%= link.attributes.occi.core.id %>
-      TITLE:       <%= link.attributes.occi.core.title %>
+      TITLE:       <%= link.attributes.occi.core.title || link.target.split('/').last %>
       TARGET:      <%= link.target %>
       <% if link.attributes.occi.networkinterface %>
       IP ADDRESS:  <%= link.attributes.occi.networkinterface.address %>
       MAC ADDRESS: <%= link.attributes.occi.networkinterface.mac %>
       <% elsif link.attributes.occi.storagelink %>
       MOUNT POINT: <%= link.attributes.occi.storagelink.deviceid %>
-      <% end %>
-  <% end %><% end %>
+      <%- end -%>
+  <% end if links %>
