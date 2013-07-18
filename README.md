@@ -14,8 +14,7 @@ Ruby
 
 The following setup is recommended
 
-* usage of the Ruby Version Manager
-* Ruby 1.9.3
+* Ruby 1.9.3+
 * RubyGems installed
 
 The following libraries / packages may be required to use rOCCI-cli
@@ -42,6 +41,8 @@ To install the most recent beta version
 
 ### Installation from source
 
+**Installation from source is intended for advanced users or developers only!**
+
 To use rOCCI-cli from source it is very much recommended to use RVM. [Install RVM](https://rvm.io/rvm/install/) with
 
     curl -L https://get.rvm.io | bash -s stable --ruby
@@ -53,8 +54,8 @@ To build and install the bleeding edge version from master
     git clone git://github.com/gwdg/rOCCI-cli.git
     cd rOCCI-cli
     rvm install ruby-1.9.3
-    rvm --create --ruby-version use 1.9.3@rOCCI-cli
-    bundle install --deployment
+    gem install bundler
+    bundle install
     rake install
 
 #### Java
@@ -63,8 +64,7 @@ To build a Java jar file from master use
 
     git clone git://github.com/gwdg/rOCCI-cli.git
     cd rOCCI-cli
-    rvm install jruby-1.7.1
-    rvm --create --ruby-version use jruby-1.7.1@rOCCI-cli
+    rvm install jruby-1.7.4
     gem install bundler
     bundle install
     warble
@@ -126,6 +126,12 @@ To delete a compute resource use
 
 Changelog
 ---------
+
+### Version 4.0
+* added extended support for OCCI-OS
+* updated human-readable output rendering
+* split the code into rOCCI-core, rOCCI-api and rOCCI-cli
+* internal changes, refactoring and some bugfixes
 
 ### Version 3.1
 * added basic OS Keystone support
