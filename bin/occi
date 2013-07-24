@@ -21,6 +21,7 @@ require 'highline/import'
 require 'openssl'
 
 extend Occi::Api::Dsl
+extend Occi::Cli::Helpers
 
 # get arguments and validate/parse them to an ostruct
 options = Occi::Cli::OcciOpts.parse ARGV
