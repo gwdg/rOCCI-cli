@@ -1,6 +1,7 @@
 require 'ostruct'
 require 'optparse'
 require 'uri'
+require 'base64'
 
 require 'occi/cli/resource_output_factory'
 
@@ -12,6 +13,7 @@ module Occi::Cli
     MEDIA_TYPES = ["application/occi+json", "application/occi+xml", "text/plain,text/occi", "text/plain"].freeze
     ACTIONS = [:list, :describe, :create, :delete, :trigger].freeze
     LOG_OUTPUTS = [:stdout, :stderr].freeze
+    ALLOWED_CONTEXT_VARS = [:public_key, :user_data].freeze
 
     def self.parse(args, test_env = false)
 
@@ -188,7 +190,22 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
             ary = /^(.+?)=(.+)$/.match(ctx).to_a.drop 1
             raise ArgumentError, "Context variables must always contain ATTR=VALUE pairs!" if ary.length != 2
 
-            options.context_vars[ary[0].to_sym] = ary[1]
+            symbol = ary[0].to_sym
+            if ALLOWED_CONTEXT_VARS.include?(symbol)
+              context_data = ary[1]
+              if context_data.gsub!(/^file:\/\//,'')
+                raise 'File does not exist! #{context_data}' unless File.exist? context_data
+                context_data = File.read(context_data)
+              end
+
+              if symbol == :user_data
+                context_data = Base64.encode64(context_data)
+              end
+
+              options.context_vars[symbol] = context_data.strip
+            else
+              Occi::Log.warn "Only #{ALLOWED_CONTEXT_VARS.join(', ')} context variables are supported! Skipping #{ary[0].to_s} ..."
+            end
           end
         end
 
