@@ -118,6 +118,41 @@ module Occi::Cli
               res.mixins << mxn
             end
           end
+
+          # TODO: find a better/universal way to do contextualization
+          if options.context_vars
+            Occi::Log.debug "with context variables: #{options.context_vars}"
+
+            options.context_vars.each_pair do |var, val|
+              schema = nil
+              mxn_attrs = Occi::Core::Attributes.new
+
+              case var
+              when :public_key
+                schema = "http://schemas.openstack.org/instance/credentials#"
+                mxn_attrs['org.openstack.credentials.publickey.name'] = {}
+                mxn_attrs['org.openstack.credentials.publickey.data'] = {}
+              when :user_data
+                schema = "http://schemas.openstack.org/compute/instance#"
+                mxn_attrs['org.openstack.compute.user_data'] = {}
+              else
+                schema = "http://schemas.ogf.org/occi/core#"
+              end
+
+              mxn = Occi::Core::Mixin.new(schema, var.to_s, 'OS contextualization mixin', mxn_attrs)
+              res.mixins << mxn
+
+              case var
+              when :public_key
+                res.attributes['org.openstack.credentials.publickey.name'] = 'Public SSH key'
+                res.attributes['org.openstack.credentials.publickey.data'] = val
+              when :user_data
+                res.attributes['org.openstack.compute.user_data'] = val
+              else
+                # do nothing
+              end
+            end
+          end
         end
 
         #TODO: set other attributes
