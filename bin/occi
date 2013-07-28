@@ -246,7 +246,11 @@ begin
             mixin = ask("What mixin should I mix in? ") { |q| q.validate = /^\S+?#\S+$/ }
             parts = mixin.split("#")
 
-            options.mixins[parts[0]] = [] if options.mixins[parts[0]].nil?
+            # TODO: find a way to remove this OCCI-OS compatibility hack
+            parts[0] = 'os_tpl' if parts[0] == 'os'
+            parts[0] = 'resource_tpl' if parts[0] == 'resource'
+
+            options.mixins[parts[0]] = [] unless options.mixins[parts[0]]
             options.mixins[parts[0]] << parts[1]
           end
         end

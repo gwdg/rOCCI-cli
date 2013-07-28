@@ -225,8 +225,12 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
 
           parts = parts.to_a.drop(1)
 
-          options.mixins = {} if options.mixins.nil?
-          options.mixins[parts[0]] = [] if options.mixins[parts[0]].nil?
+          # TODO: find a way to remove this OCCI-OS compatibility hack
+          parts[0] = 'os_tpl' if parts[0] == 'os'
+          parts[0] = 'resource_tpl' if parts[0] == 'resource'
+
+          options.mixins = {} unless options.mixins
+          options.mixins[parts[0]] = [] unless options.mixins[parts[0]]
           options.mixins[parts[0]] << parts[1]
         end
 
@@ -238,7 +242,7 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
 
           raise ArgumentError, "Specified link URI is not valid!" unless link_relative_path.start_with? '/'
 
-          options.links = [] if options.links.nil?
+          options.links = [] unless options.links
           options.links << link_relative_path
         end
 
@@ -371,7 +375,7 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
       end
 
       if options.action == :create
-        if !options.links.nil?
+        if options.links
           mandatory << :links
         else
           mandatory << :mixins
@@ -392,12 +396,12 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
     end
 
     def self.check_hash(hash, mandatory, opts)
-      if !hash.is_a? Hash
+      unless hash.is_a?(Hash)
         hash = hash.marshal_dump
       end
 
       missing = mandatory.select{ |param| hash[param].nil? }
-      if !missing.empty?
+      unless missing.empty?
         if @@quiet
           exit false
         else
