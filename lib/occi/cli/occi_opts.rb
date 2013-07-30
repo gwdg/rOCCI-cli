@@ -163,6 +163,10 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
                 "--resource RESOURCE",
                 String,
                 "Resource to be queried (e.g. network, compute, storage etc.), required") do |resource|
+          # TODO: find a way to remove this OCCI-OS compatibility hack
+          resource = 'os_tpl' if resource == 'os'
+          resource = 'resource_tpl' if resource == 'resource'
+
           options.resource = resource
         end
 
