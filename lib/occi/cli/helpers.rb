@@ -157,8 +157,10 @@ module Occi::Cli
           end
         end
 
-        #TODO: set other attributes
+        # TODO: set other attributes
+        # TODO: OCCI-OS uses occi.compute.hostname instead of title
         res.title = options.attributes[:title]
+        res.hostname = options.attributes[:title]
 
         Occi::Log.debug "Creating #{options.resource}:\n#{res.inspect}"
 
