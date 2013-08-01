@@ -90,7 +90,9 @@ module Occi::Cli
           Occi::Log.debug "with links: #{options.links}"
 
           options.links.each do |link|
-            link = options.endpoint.chomp('/') + link unless link.start_with? options.endpoint
+            if link.start_with? options.endpoint
+              link.gsub!(options.endpoint.chomp('/'), '')
+            end
 
             if link.include? "/storage/"
               Occi::Log.debug "Adding storagelink to #{options.resource}"
@@ -155,8 +157,10 @@ module Occi::Cli
           end
         end
 
-        #TODO: set other attributes
+        # TODO: set other attributes
+        # TODO: OCCI-OS uses occi.compute.hostname instead of title
         res.title = options.attributes[:title]
+        res.hostname = options.attributes[:title]
 
         Occi::Log.debug "Creating #{options.resource}:\n#{res.inspect}"
 
