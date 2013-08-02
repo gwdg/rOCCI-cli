@@ -16,13 +16,15 @@ module Occi::Cli
         raise "Unknown resource #{options.resource}, there is nothing to list here!"
       end
 
-      return found if output.nil?
+      helper_list_output(found, options, output)
+    end
 
-      if Occi::Cli::ResourceOutputFactory.allowed_resource_types.include? options.resource.to_sym
-        puts output.format(found, :locations, options.resource.to_sym)
-      else
-        Occi::Log.warn "Not printing, the resource type is not supported!"
-      end
+    def helper_list_output(found, options, output)
+      return found unless output
+
+      helper_formatter_output(found, output, :locations, options.resource.to_sym)
+
+      nil
     end
 
     def helper_describe(options, output = nil)
@@ -49,7 +51,11 @@ module Occi::Cli
         raise "Unknown resource #{options.resource}, there is nothing to describe here!"
       end
 
-      return found if output.nil?
+      helper_describe_output(found, options, output)
+    end
+
+    def helper_describe_output(found, options, output)
+      return found unless output
 
       if options.resource.start_with? options.endpoint
         # resource contains full endpoint URI
@@ -68,11 +74,9 @@ module Occi::Cli
         resource_type = options.resource.to_sym
       end
 
-      if Occi::Cli::ResourceOutputFactory.allowed_resource_types.include? resource_type
-        puts output.format(found, :resources, resource_type)
-      else
-        Occi::Log.warn "Not printing, the resource type [#{resource_type.to_s}] is not supported!"
-      end
+      helper_formatter_output(found, output, :resources, resource_type)
+
+      nil
     end
 
     def helper_create(options, output = nil)
@@ -86,76 +90,9 @@ module Occi::Cli
 
         Occi::Log.debug "Creating #{options.resource}:\n#{res.inspect}"
 
-        if options.links
-          Occi::Log.debug "with links: #{options.links}"
-
-          options.links.each do |link|
-            if link.start_with? options.endpoint
-              link.gsub!(options.endpoint.chomp('/'), '')
-            end
-
-            if link.include? "/storage/"
-              Occi::Log.debug "Adding storagelink to #{options.resource}"
-              res.storagelink link
-            elsif link.include? "/network/"
-              Occi::Log.debug "Adding networkinterface to #{options.resource}"
-              res.networkinterface link
-            else
-              raise "Unknown link type #{link}, stopping here!"
-            end
-          end
-        end
-
-        if options.mixins
-          Occi::Log.debug "with mixins: #{options.mixins}"
-
-          options.mixins.keys.each do |type|
-            Occi::Log.debug "Adding mixins of type #{type} to #{options.resource}"
-
-            options.mixins[type].each do |name|
-              mxn = mixin name, type
-
-              raise "Unknown mixin #{type}##{name}, stopping here!" if mxn.nil?
-              Occi::Log.debug "Adding mixin #{mxn} to #{options.resource}"
-              res.mixins << mxn
-            end
-          end
-
-          # TODO: find a better/universal way to do contextualization
-          if options.context_vars
-            Occi::Log.debug "with context variables: #{options.context_vars}"
-
-            options.context_vars.each_pair do |var, val|
-              schema = nil
-              mxn_attrs = Occi::Core::Attributes.new
-
-              case var
-              when :public_key
-                schema = "http://schemas.openstack.org/instance/credentials#"
-                mxn_attrs['org.openstack.credentials.publickey.name'] = {}
-                mxn_attrs['org.openstack.credentials.publickey.data'] = {}
-              when :user_data
-                schema = "http://schemas.openstack.org/compute/instance#"
-                mxn_attrs['org.openstack.compute.user_data'] = {}
-              else
-                schema = "http://schemas.ogf.org/occi/core#"
-              end
-
-              mxn = Occi::Core::Mixin.new(schema, var.to_s, 'OS contextualization mixin', mxn_attrs)
-              res.mixins << mxn
-
-              case var
-              when :public_key
-                res.attributes['org.openstack.credentials.publickey.name'] = 'Public SSH key'
-                res.attributes['org.openstack.credentials.publickey.data'] = val
-              when :user_data
-                res.attributes['org.openstack.compute.user_data'] = val
-              else
-                # do nothing
-              end
-            end
-          end
-        end
+        helper_attach_links(options, res)
+        helper_attach_mixins(options, res)
+        helper_attach_context_vars(options, res)
 
         # TODO: set other attributes
         # TODO: OCCI-OS uses occi.compute.hostname instead of title
@@ -175,6 +112,80 @@ module Occi::Cli
       puts location
     end
 
+    def helper_attach_links(options, res)
+      return unless options.links
+      Occi::Log.debug "with links: #{options.links}"
+
+      options.links.each do |link|
+        if link.start_with? options.endpoint
+          link.gsub!(options.endpoint.chomp('/'), '')
+        end
+
+        if link.include? "/storage/"
+          Occi::Log.debug "Adding storagelink to #{options.resource}"
+          res.storagelink link
+        elsif link.include? "/network/"
+          Occi::Log.debug "Adding networkinterface to #{options.resource}"
+          res.networkinterface link
+        else
+          raise "Unknown link type #{link}, stopping here!"
+        end
+      end
+    end
+
+    def helper_attach_mixins(options, res)
+      return unless options.mixins
+      Occi::Log.debug "with mixins: #{options.mixins}"
+
+      options.mixins.keys.each do |type|
+        Occi::Log.debug "Adding mixins of type #{type} to #{options.resource}"
+
+        options.mixins[type].each do |name|
+          mxn = mixin name, type
+
+          raise "Unknown mixin #{type}##{name}, stopping here!" unless mxn
+          Occi::Log.debug "Adding mixin #{mxn} to #{options.resource}"
+          res.mixins << mxn
+        end
+      end
+    end
+
+    def helper_attach_context_vars(options, res)
+      # TODO: find a better/universal way to do contextualization
+      return unless options.context_vars
+      Occi::Log.debug "with context variables: #{options.context_vars}"
+
+      options.context_vars.each_pair do |var, val|
+        schema = nil
+        mxn_attrs = Occi::Core::Attributes.new
+
+        case var
+        when :public_key
+          schema = "http://schemas.openstack.org/instance/credentials#"
+          mxn_attrs['org.openstack.credentials.publickey.name'] = {}
+          mxn_attrs['org.openstack.credentials.publickey.data'] = {}
+        when :user_data
+          schema = "http://schemas.openstack.org/compute/instance#"
+          mxn_attrs['org.openstack.compute.user_data'] = {}
+        else
+          schema = "http://schemas.ogf.org/occi/core#"
+        end
+
+        mxn = Occi::Core::Mixin.new(schema, var.to_s, 'OS contextualization mixin', mxn_attrs)
+        res.mixins << mxn
+
+        case var
+        when :public_key
+          res.attributes['org.openstack.credentials.publickey.name'] = 'Public SSH key'
+          res.attributes['org.openstack.credentials.publickey.data'] = val
+        when :user_data
+          res.attributes['org.openstack.compute.user_data'] = val
+        else
+          # do nothing
+        end
+      end
+    end
+
     def helper_delete(options, output = nil)
       if delete(options.resource)
         Occi::Log.info "Resource #{options.resource} successfully removed!"
@@ -188,5 +199,14 @@ module Occi::Cli
     def helper_trigger(options, output = nil)
       raise "Not yet implemented!"
     end
+
+    def helper_formatter_output(found, output, format_symbol, resource_type)
+      if Occi::Cli::ResourceOutputFactory.allowed_resource_types.include? resource_type
+        puts output.format(found, format_symbol, resource_type)
+      else
+        Occi::Log.warn "Not printing, resource type [#{resource_type.to_s}] is not supported!"
+      end
+    end
+
   end
 end
