@@ -9,62 +9,79 @@ rOCCI-cli - A Ruby OCCI Framework
 Requirements
 ------------
 
-Ruby
+### Ruby
 * at least version 1.8.7 is required
-
-The following setup is recommended
-
-* Ruby 1.9.3+
+* Ruby 1.9.3+ is recommended
 * RubyGems installed
+* rake installed (e.g., `gem install rake`)
 
-The following libraries / packages may be required to use rOCCI-cli
+### Libraries/packages
+* libxslt1-dev/libxslt-devel
+* libxml2-dev/libxml2-devel
+* **only if using Ruby 1.8.7:** libonig-dev/oniguruma-devel (Linux) or oniguruma (Mac)
 
-* libxslt-dev
-* libxml2-dev
-* **only if using Ruby 1.8.7:** libonig-dev (Linux) or oniguruma (Mac)
+### Examples
+For distros based on Debian:
+~~~
+apt-get install ruby rubygems ruby-dev libxslt1-dev libxml2-dev libonig-dev
+~~~
+
+For distros based on RHEL:
+~~~
+yum install libxml2-devel libxslt-devel ruby-devel openssl-devel gcc gcc-c++ ruby rubygems oniguruma-devel
+~~~
 
 To use rOCCI-cli with Java, you need JRE 6 or 7. To build rOCCI-cli for Java, you need JDK 6 or 7.
 
 Installation
 ------------
 
-**[Mac OS X has some special requirements for the installation. Detailed information can be found in
-doc/macosx.md.](doc/macosx.md)**
+### From RubyGems.org
+
+**[Mac OS X has some special requirements for the installation. Detailed information can be found in doc/macosx.md.](doc/macosx.md)**
 
 To install the most recent stable version
 
+    gem install rake
     gem install occi-cli
 
 To install the most recent beta version
 
+    gem install rake
     gem install occi-cli --pre
 
-### Installation from source
+### From source (dev)
 
-**Installation from source is intended for advanced users or developers only!**
+**Installation from source should never be your first choice! Especially, if you are not familiar with RVM, Bundler, Rake and other dev tools for Ruby!**
+**However, if you wish to contribute to our project, this is the right way to start.**
 
 To use rOCCI-cli from source it is very much recommended to use RVM. [Install RVM](https://rvm.io/rvm/install/) with
 
     curl -L https://get.rvm.io | bash -s stable --ruby
-
-#### Ruby
+    rvm install 1.9.3
+    rvm use 1.9.3 --default
 
 To build and install the bleeding edge version from master
 
     git clone git://github.com/gwdg/rOCCI-cli.git
     cd rOCCI-cli
-    rvm install ruby-1.9.3
     gem install bundler
     bundle install
+    bundle exec rake test
     rake install
 
-#### Java
+### From source, for Java
+
+To use rOCCI-cli with Java it is very much recommended to use RVM. [Install RVM](https://rvm.io/rvm/install/) with
+
+    curl -L https://get.rvm.io | bash -s stable --ruby
+    rvm install jruby
+    rvm use jruby --default
 
 To build a Java jar file from master use
 
     git clone git://github.com/gwdg/rOCCI-cli.git
     cd rOCCI-cli
-    rvm install jruby-1.7.4
     gem install bundler
     bundle install
     warble
