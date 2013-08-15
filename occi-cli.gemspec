@@ -20,7 +20,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.extensions    = 'ext/mkrf_conf.rb'
 
-  gem.add_dependency 'occi-api'
+  gem.add_dependency 'occi-api', '~> 4.0.1'
   gem.add_dependency 'highline'
   gem.add_dependency 'json'
 
