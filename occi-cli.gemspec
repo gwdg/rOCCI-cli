@@ -18,9 +18,8 @@ Gem::Specification.new do |gem|
   gem.files         = `git ls-files`.split("\n")
   gem.test_files    = `git ls-files -- {test,spec}/*`.split("\n")
   gem.require_paths = ["lib"]
-  gem.extensions    = 'ext/mkrf_conf.rb'
 
-  gem.add_dependency 'occi-api', '~> 4.0.1'
+  gem.add_dependency 'occi-api', '~> 4.1.0'
   gem.add_dependency 'highline'
   gem.add_dependency 'json'
 
@@ -33,5 +32,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "yard-rspec"
   gem.add_development_dependency "yard-cucumber"
 
-  gem.required_ruby_version     = ">= 1.8.7"
+  gem.required_ruby_version     = ">= 1.9.3"
 end
