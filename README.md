@@ -14,20 +14,30 @@ Requirements
 * RubyGems have to be installed
 * Rake has to be installed (e.g., `gem install rake`)
 
-### Libraries/packages
-* libxslt1-dev/libxslt-devel
-* libxml2-dev/libxml2-devel
+### Dependencies
+* `libxslt1-dev` or `libxslt-devel`
+* `libxml2-dev`or `libxml2-devel`
 
 ### Examples
-For distros based on Debian:
+#### For distros based on Debian:
 ~~~
 apt-get install ruby rubygems ruby-dev libxslt1-dev libxml2-dev
 ~~~
+~~~
+ruby -v
+~~~
 
-For distros based on RHEL:
+**Unless you have Ruby >= 1.9.3, please, go to [rOCCI-cli#RVM](#rvm) and install RVM with a newer Ruby version.**
+
+#### For distros based on RHEL:
 ~~~
 yum install libxml2-devel libxslt-devel ruby-devel openssl-devel gcc gcc-c++ ruby rubygems
 ~~~
+~~~
+ruby -v
+~~~
+
+**Unless you have Ruby >= 1.9.3, please, go to [rOCCI-cli#RVM](#rvm) and install RVM with a newer Ruby version.**
 
 To use rOCCI-cli with Java, you need JRE 6 or 7. To build rOCCI-cli for Java, you need JDK 6 or 7.
 
@@ -51,13 +61,8 @@ To install the most recent beta version
 ### From source (dev)
 
 **Installation from source should never be your first choice! Especially, if you are not familiar with RVM, Bundler, Rake and other dev tools for Ruby!**
+
 **However, if you wish to contribute to our project, this is the right way to start.**
-
-To use rOCCI-cli from source it is very much recommended to use RVM. [Install RVM](https://rvm.io/rvm/install/) with
-
-    curl -L https://get.rvm.io | bash -s stable --ruby
-    rvm install 1.9.3
-    rvm use 1.9.3 --default
 
 To build and install the bleeding edge version from master
 
@@ -70,11 +75,7 @@ To build and install the bleeding edge version from master
 
 ### From source, for Java
 
-To use rOCCI-cli with Java it is very much recommended to use RVM. [Install RVM](https://rvm.io/rvm/install/) with
-
-    curl -L https://get.rvm.io | bash -s stable --ruby
-    rvm install jruby
-    rvm use jruby --default
+**Notice:** In order to build rOCCI-cli for Java, you need working jRuby installation. We recommend using [rOCCI-cli#RVM](#rvm).
 
 To build a Java jar file from master use
 
@@ -86,7 +87,25 @@ To build a Java jar file from master use
 
 For Linux / Mac OS X you can create a OCCI Java executable from the jar file using
 
-    sudo echo '#!/usr/bin/java -jar' | cat - occi.jar > occi ; sudo chmod +x occi
+    sudo echo '#!/usr/bin/java -jar' | cat - occi-cli.jar > occi ; sudo chmod +x occi
+
+### RVM
+
+**Notice:** Follow the RVM installation guide linked below, we recommend using the default 'Single-User installation'.
+
+**Warning:** NEVER install RVM as root! If you choose the 'Multi-User installation', use a different user account with sudo access instead!
+
+* [Installing RVM](https://rvm.io/rvm/install#explained)
+* Install Ruby
+
+~~~
+rvm requirements
+rvm install 1.9.3
+rvm use 1.9.3 --default
+~~~
+~~~
+ruby -v
+~~~
 
 Usage
 -----
