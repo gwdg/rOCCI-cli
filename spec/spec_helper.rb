@@ -1,11 +1,14 @@
 require 'rubygems'
-require 'occi-cli'
 
 # enable coverage reports
 if ENV['COVERAGE']
   require 'simplecov'
+
+  SimpleCov.add_filter "/spec/"
   SimpleCov.start
 end
+
+require 'occi-cli'
 
 RSpec.configure do |c|
   # in RSpec 3 this will no longer be necessary.
