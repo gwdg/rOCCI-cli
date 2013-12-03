@@ -23,7 +23,7 @@ module Occi::Cli
         method = "mixins_to_#{@output_format}".to_sym
       elsif data.kind_of? Array
         raise Occi::Cli::Errors::FormatterInputTypeError,
-              "Arrays with #{data.first.class.name.inspect} are not supported!" unless data.first.kind_of? String
+              "Arrays with #{data.first.class.name.inspect} are not supported!" unless data.first.nil? || data.first.kind_of?(String)
         method = "locations_to_#{@output_format}".to_sym
       else
         raise Occi::Cli::Errors::FormatterInputTypeError,
