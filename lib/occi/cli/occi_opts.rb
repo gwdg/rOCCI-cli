@@ -66,7 +66,7 @@ occi --endpoint https://localhost:3300/ --action list --resource resource_tpl --
 
 occi --endpoint https://localhost:3300/ --action describe --resource os_tpl#debian6 --auth x509
 
-occi --endpoint https://localhost:3300/ --action create --resource compute --mixin os_tpl#debian6 --mixin resource_tpl#small --attributes title="My rOCCI VM" --auth x509
+occi --endpoint https://localhost:3300/ --action create --resource compute --mixin os_tpl#debian6 --mixin resource_tpl#small --attribute title="My rOCCI VM" --auth x509
 
 occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd4f654sf65g4-s5fg65sfg465sfg-sf65g46sf5g4sdfg --auth x509}
 
@@ -171,14 +171,14 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
         end
 
         opts.on("-t",
-                "--attributes ATTRS",
+                "--attribute ATTRS",
                 Array,
                 "Comma separated attributes for new resources such as title=\"Name\", required") do |attributes|
-          options.attributes = {}
+          options.attributes ||= {}
 
           attributes.each do |attribute|
             ary = /^(.+?)=(.+)$/.match(attribute).to_a.drop 1
-            raise ArgumentError, "Attributes must always contain ATTR=VALUE pairs!" if ary.length != 2
+            raise ArgumentError, "Attribute must always contain ATTR=VALUE pairs!" unless ary.length == 2
 
             options.attributes[ary[0].to_sym] = ary[1]
           end
@@ -187,12 +187,12 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
         opts.on("-T",
                 "--context CTX_VARS",
                 Array,
-                "Comma separated context variables for new compute resources such as SSH_KEY=\"ssh-rsa dfsdf...adfdf== user@localhost\"") do |context|
-          options.context_vars = {}
+                "Comma separated context variables for new compute resources such as public_key=\"ssh-rsa dfsdf...adfdf== user@localhost\"") do |context|
+          options.context_vars ||= {}
 
           context.each do |ctx|
             ary = /^(.+?)=(.+)$/.match(ctx).to_a.drop 1
-            raise ArgumentError, "Context variables must always contain ATTR=VALUE pairs!" if ary.length != 2
+            raise ArgumentError, "Context variables must always contain ATTR=VALUE pairs!" unless ary.length == 2
 
             symbol = ary[0].to_sym
             if ALLOWED_CONTEXT_VARS.include?(symbol)
@@ -222,32 +222,34 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
 
         opts.on("-M",
                 "--mixin NAME",
-                String,
-                "Type and name of the mixin as TYPE#NAME (e.g. os_tpl#monitoring, resource_tpl#medium)") do |mixin|
-          parts = /^(\S+?)#(\S+)$/.match(mixin)
-          raise "Unknown mixin format! Use TYPE#NAME!" unless parts
+                Array,
+                "Type and name of the mixin as TYPE#NAME (e.g. os_tpl#monitoring, resource_tpl#medium)") do |mixins|
+          options.mixins ||= {}
 
-          parts = parts.to_a.drop(1)
+          mixins.each do |mixin|
+            parts = /^(\S+?)#(\S+)$/.match(mixin).to_a.drop(1)
+            raise "Unknown mixin format #{mixin.inspect}! Use TYPE#NAME!" unless parts.length == 2
 
-          # TODO: find a way to remove this OCCI-OS compatibility hack
-          parts[0] = 'os_tpl' if parts[0] == 'os'
-          parts[0] = 'resource_tpl' if parts[0] == 'resource'
+            # TODO: find a way to remove this OCCI-OS compatibility hack
+            parts[0] = 'os_tpl' if parts[0] == 'os'
+            parts[0] = 'resource_tpl' if parts[0] == 'resource'
 
-          options.mixins = {} unless options.mixins
-          options.mixins[parts[0]] = [] unless options.mixins[parts[0]]
-          options.mixins[parts[0]] << parts[1]
+            options.mixins[parts[0]] ||= []
+            options.mixins[parts[0]] << parts[1]
+          end
         end
 
         opts.on("-j",
                 "--link URI",
-                String,
-                "Link specified resource to the resource being created, only for action CREATE and resource COMPUTE") do |link|
-          link_relative_path = URI(link).path
+                Array,
+                "Link specified resource to the resource being created, only for action CREATE and resource COMPUTE") do |links|
+          options.links ||= []
 
-          raise ArgumentError, "Specified link URI is not valid!" unless link_relative_path.start_with? '/'
-
-          options.links = [] unless options.links
-          options.links << link_relative_path
+          links.each do |link|
+            link_relative_path = URI(link).path
+            raise ArgumentError, "Specified link URI is not valid!" unless link_relative_path.start_with? '/'
+            options.links << link_relative_path
+          end
         end
 
         opts.on("-g",
