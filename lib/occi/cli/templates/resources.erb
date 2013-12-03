@@ -1,24 +1,25 @@
 <%- # We always get Occi::Core::Resources -%>
-<% occi_resources.each do |resource| %>
+<%- occi_resources.each do |resource| -%>
 [<%= resource.kind.type_identifier %>]
-    <% resource.attributes.names.each_pair do |attribute, value| %>
+    <%- resource.attributes.names.each_pair do |attribute, value| -%>
     <%= attribute %> = <%= value %>
-    <% end %>
+    <%- end -%>
 
-    <% resource.links.each do |link| -%>
+    <%- resource.links.each do |link| -%>
     [<%= link.kind.type_identifier %>]
-        <% link.attributes.names.each_pair do |attribute, value| %>
+        <%- link.attributes.names.each_pair do |attribute, value| -%>
         <%= attribute %> = <%= value %>
-        <% end%>
+        <%- end -%>
 
-    <% end %>
+    <%- end -%>
 
-    <% resource.mixins.each do |mixin| -%>
+    <%- resource.mixins.each do |mixin| -%>
     [<%= mixin.type_identifier %>]
         Title:        <%= mixin.title %>
         Term:         <%= mixin.term %>
         Location:     <%= mixin.location %>
 
-    <% end %>
+    <%- end -%>
 
-<% end %>
+
+<%- end -%>
