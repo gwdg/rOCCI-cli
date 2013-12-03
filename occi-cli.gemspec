@@ -23,14 +23,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'highline'
   gem.add_dependency 'json'
 
-  gem.add_development_dependency "rspec"
-  gem.add_development_dependency "rake"
-  gem.add_development_dependency "builder"
-  gem.add_development_dependency "simplecov"
-  gem.add_development_dependency "yard"
-  gem.add_development_dependency "yard-sinatra"
-  gem.add_development_dependency "yard-rspec"
-  gem.add_development_dependency "yard-cucumber"
-
   gem.required_ruby_version     = ">= 1.9.3"
 end
