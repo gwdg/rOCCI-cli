@@ -1,8 +1,0 @@
-<%- # We always get a JSON -%>
-NETWORK:
-  ID:           <%= attributes.occi.core.id %>
-  TITLE:        <%= attributes.occi.core.title || attributes.occi.network.label %>
-  STATE:        <%= attributes.occi.network.state %>
-  ALLOCATION:   <%= attributes.occi.network.allocation || (attributes.occi.networkinterface && attributes.occi.networkinterface.allocation) %>
-  ADDRESS:      <%= attributes.occi.network.address || (attributes.occi.networkinterface && attributes.occi.networkinterface.address) %>
-

@@ -1,0 +1,8 @@
+<%- # We always get Occi::Core::Mixins -%>
+<% occi_resources.each do |mixin| %>
+[<%= mixin.type_identifier %>]
+	Title:        <%= mixin.title %>
+	Term:         <%= mixin.term %>
+	Location:     <%= mixin.location %>
+
+<% end %>
