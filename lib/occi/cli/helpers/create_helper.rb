@@ -3,13 +3,13 @@ module Occi::Cli::Helpers::CreateHelper
   def helper_create(options, output = nil)
     location = nil
 
-    if resource_types.include? options.resource
-      Occi::Log.debug "#{options.resource} is a resource type."
+    if resource_types.include?(options.resource) || resource_type_identifiers.include?(options.resource)
+      Occi::Log.debug "#{options.resource.inspect} is a resource type."
       raise "Not yet implemented!" unless options.resource.include? "compute"
 
       res = resource options.resource
 
-      Occi::Log.debug "Creating #{options.resource}:\n#{res.inspect}"
+      Occi::Log.debug "Creating #{options.resource.inspect}:\n#{res.inspect}"
 
       helper_attach_links(options, res)
       helper_attach_mixins(options, res)
@@ -20,12 +20,12 @@ module Occi::Cli::Helpers::CreateHelper
       res.title = options.attributes[:title]
       res.hostname = options.attributes[:title]
 
-      Occi::Log.debug "Creating #{options.resource}:\n#{res.inspect}"
+      Occi::Log.debug "Creating #{options.resource.inspect}:\n#{res.inspect}"
 
       location = create res
     else
-      Occi::Log.warn "I have no idea what #{options.resource} is ..."
-      raise "Unknown resource #{options.resource}, there is nothing to create here!"
+      Occi::Log.warn "I have no idea what #{options.resource.inspect} is ..."
+      raise "Unknown resource #{options.resource.inspect}, there is nothing to create here!"
     end
 
     return location if output.nil?
@@ -35,7 +35,7 @@ module Occi::Cli::Helpers::CreateHelper
 
   def helper_attach_links(options, res)
     return unless options.links
-    Occi::Log.debug "with links: #{options.links}"
+    Occi::Log.debug "with links: #{options.links.inspect}"
 
     options.links.each do |link|
       if link.start_with? options.endpoint
@@ -43,13 +43,13 @@ module Occi::Cli::Helpers::CreateHelper
       end
 
       if link.include? "/storage/"
-        Occi::Log.debug "Adding storagelink to #{options.resource}"
+        Occi::Log.debug "Adding storagelink to #{options.resource.inspect}"
         res.storagelink link
       elsif link.include? "/network/"
-        Occi::Log.debug "Adding networkinterface to #{options.resource}"
+        Occi::Log.debug "Adding networkinterface to #{options.resource.inspect}"
         res.networkinterface link
       else
-        raise "Unknown link type #{link}, stopping here!"
+        raise "Unknown link type #{link.inspect}, stopping here!"
       end
     end
   end
@@ -58,16 +58,9 @@ module Occi::Cli::Helpers::CreateHelper
     return unless options.mixins
     Occi::Log.debug "with mixins: #{options.mixins}"
 
-    options.mixins.keys.each do |type|
-      Occi::Log.debug "Adding mixins of type #{type} to #{options.resource}"
-
-      options.mixins[type].each do |name|
-        mxn = mixin name, type
-
-        raise "Unknown mixin #{type}##{name}, stopping here!" unless mxn
-        Occi::Log.debug "Adding mixin #{mxn} to #{options.resource}"
-        res.mixins << mxn
-      end
+    options.mixins.to_a.each do |mxn|
+      Occi::Log.debug "Adding mixin #{mxn.inspect} to #{options.resource.inspect}"
+      res.mixins << mxn
     end
   end
 
