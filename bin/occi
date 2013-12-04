@@ -243,17 +243,12 @@ begin
           number_of_mixins = ask("How many mixins do you wish me to mix into this resource? ",
                                  Integer) { |q| q.in = 0..2 }
 
-          options.mixins = {}
+          options.mixins = Occi::Core::Mixins.new
           (1..number_of_mixins).each do |mixin_number|
-            mixin = ask("What mixin should I mix in? ") { |q| q.validate = /^\S+?#\S+$/ }
+            mixin = ask("What mixin should I mix in? ") { |q| q.validate = Occi::Cli::OcciOpts::MIXIN_REGEXP }
             parts = mixin.split("#")
 
-            # TODO: find a way to remove this OCCI-OS compatibility hack
-            parts[0] = 'os_tpl' if parts[0] == 'os'
-            parts[0] = 'resource_tpl' if parts[0] == 'resource'
-
-            options.mixins[parts[0]] ||= []
-            options.mixins[parts[0]] << parts[1]
+            options.mixins << Occi::Core::Mixin.new("#{parts[0]}#", parts[1])
           end
         end
       }

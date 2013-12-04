@@ -15,6 +15,9 @@ module Occi::Cli
     LOG_OUTPUTS = [:stdout, :stderr].freeze
     ALLOWED_CONTEXT_VARS = [:public_key, :user_data].freeze
 
+    MIXIN_REGEXP = /^(https?:\/\/\S+?)#(\S+)$/
+    CONTEXT_REGEXP = ATTR_REGEXP = /^(.+?)=(.+)$/
+
     def self.parse(args, test_env = false)
 
       @@quiet = test_env
@@ -45,7 +48,7 @@ module Occi::Cli
 
       options.output_format = :plain
 
-      options.mixins = nil
+      options.mixins = Occi::Core::Mixins.new
       options.links = nil
       options.attributes = nil
       options.context_vars = nil
@@ -163,10 +166,6 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
                 "--resource RESOURCE",
                 String,
                 "Resource to be queried (e.g. network, compute, storage etc.), required") do |resource|
-          # TODO: find a way to remove this OCCI-OS compatibility hack
-          resource = 'os_tpl' if resource == 'os'
-          resource = 'resource_tpl' if resource == 'resource'
-
           options.resource = resource
         end
 
@@ -177,7 +176,7 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
           options.attributes ||= {}
 
           attributes.each do |attribute|
-            ary = /^(.+?)=(.+)$/.match(attribute).to_a.drop 1
+            ary = ATTR_REGEXP.match(attribute).to_a.drop 1
             raise ArgumentError, "Attribute must always contain ATTR=VALUE pairs!" unless ary.length == 2
 
             options.attributes[ary[0].to_sym] = ary[1]
@@ -191,7 +190,7 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
           options.context_vars ||= {}
 
           context.each do |ctx|
-            ary = /^(.+?)=(.+)$/.match(ctx).to_a.drop 1
+            ary = CONTEXT_REGEXP.match(ctx).to_a.drop 1
             raise ArgumentError, "Context variables must always contain ATTR=VALUE pairs!" unless ary.length == 2
 
             symbol = ary[0].to_sym
@@ -223,19 +222,14 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
         opts.on("-M",
                 "--mixin NAME",
                 Array,
-                "Type and name of the mixin as TYPE#NAME (e.g. os_tpl#monitoring, resource_tpl#medium)") do |mixins|
-          options.mixins ||= {}
+                "Type and name of the mixin as SCHEME#NAME (e.g. http://localhost/os_tpl#monitoring, http://localhost/resource_tpl#medium)") do |mixins|
+          options.mixins ||= Occi::Core::Mixins.new
 
           mixins.each do |mixin|
-            parts = /^(\S+?)#(\S+)$/.match(mixin).to_a.drop(1)
-            raise "Unknown mixin format #{mixin.inspect}! Use TYPE#NAME!" unless parts.length == 2
+            parts = MIXIN_REGEXP.match(mixin).to_a.drop(1)
+            raise "Unknown mixin format #{mixin.inspect}! Use SCHEME#NAME!" unless parts.length == 2
 
-            # TODO: find a way to remove this OCCI-OS compatibility hack
-            parts[0] = 'os_tpl' if parts[0] == 'os'
-            parts[0] = 'resource_tpl' if parts[0] == 'resource'
-
-            options.mixins[parts[0]] ||= []
-            options.mixins[parts[0]] << parts[1]
+            options.mixins << Occi::Core::Mixin.new("#{parts[0]}#", parts[1])
           end
         end
 
