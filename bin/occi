@@ -143,8 +143,8 @@ begin
 
     # offer just the resource types we will be able to process
     menu_resources ||= []
-    menu_resources << resource_type_identifiers
-    menu_resources << mixin_list
+    menu_resources << resource_type_identifiers.select { |i| i.include?("infrastructure#") }
+    menu_resources << ["http://schemas.ogf.org/occi/infrastructure#os_tpl", "http://schemas.ogf.org/occi/infrastructure#resource_tpl"]
     menu_resources.flatten!
 
     # separate menus from each other
