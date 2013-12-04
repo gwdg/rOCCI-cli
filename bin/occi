@@ -143,8 +143,8 @@ begin
 
     # offer just the resource types we will be able to process
     menu_resources ||= []
-    menu_resources << model.kinds.collect { |kind| kind.type_identifier }
-    menu_resources << model.mixins.collect { |mixin| mixin.type_identifier }
+    menu_resources << resource_type_identifiers
+    menu_resources << mixin_list
     menu_resources.flatten!
 
     # separate menus from each other

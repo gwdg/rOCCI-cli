@@ -10,10 +10,7 @@ module Occi::Cli::Helpers::DescribeHelper
       Occi::Log.debug "#{options.resourcre} is a mixin type."
 
       found = Occi::Core::Mixins.new
-      mixins(options.resource).each do |mxn|
-        mxn = mxn.split("#").last
-        found.merge mixin(mxn, options.resource, true)
-      end
+      found.merge mixins(options.resource)
     elsif mixin_types.include? options.resource.split('#').first
       Occi::Log.debug "#{options.resource} is a specific mixin type."
 

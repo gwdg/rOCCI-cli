@@ -8,7 +8,7 @@ module Occi::Cli::Helpers::ListHelper
       found = list options.resource
     elsif mixin_types.include? options.resource
       Occi::Log.debug "#{options.resource} is a mixin type."
-      found = mixins options.resource
+      found = mixin_list options.resource
     else
       Occi::Log.error "I have no idea what #{options.resource} is ..."
       raise "Unknown resource #{options.resource}, there is nothing to list here!"
