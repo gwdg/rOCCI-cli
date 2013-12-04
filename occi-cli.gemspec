@@ -19,18 +19,9 @@ Gem::Specification.new do |gem|
   gem.test_files    = `git ls-files -- {test,spec}/*`.split("\n")
   gem.require_paths = ["lib"]
 
-  gem.add_dependency 'occi-api', '~> 4.1.0'
+  gem.add_dependency 'occi-api', '= 4.2.0.beta.2'
   gem.add_dependency 'highline'
   gem.add_dependency 'json'
-
-  gem.add_development_dependency "rspec"
-  gem.add_development_dependency "rake"
-  gem.add_development_dependency "builder"
-  gem.add_development_dependency "simplecov"
-  gem.add_development_dependency "yard"
-  gem.add_development_dependency "yard-sinatra"
-  gem.add_development_dependency "yard-rspec"
-  gem.add_development_dependency "yard-cucumber"
 
   gem.required_ruby_version     = ">= 1.9.3"
 end
