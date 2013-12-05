@@ -39,17 +39,21 @@ module Occi::Cli
 
     def resources_to_json(occi_resources)
       # generate JSON document from Occi::Core::Resources
+      occi_resources = occi_resources.to_a
+
       if @output_format == :json_pretty
-        output = "[\n"
-        occi_resources.to_a.each { |r| output << JSON.pretty_generate(r.as_json.to_hash) }
-        output << "\n]"
+        output_first = "[\n"
+        output_ary = occi_resources.collect { |r| JSON.pretty_generate(r.as_json.to_hash) }
+        separator = ",\n"
+        output_last = "\n]"
       else
-        output = "["
-        occi_resources.to_a.each { |r| output << JSON.generate(r.as_json.to_hash) }
-        output << "]"
+        output_first = "["
+        output_ary = occi_resources.collect { |r| JSON.generate(r.as_json.to_hash) }
+        separator = ","
+        output_last = "]"
       end
 
-      output
+      "#{output_first}#{output_ary.join(separator)}#{output_last}"
     end
     alias_method :resources_to_json_pretty, :resources_to_json
     alias_method :mixins_to_json, :resources_to_json
