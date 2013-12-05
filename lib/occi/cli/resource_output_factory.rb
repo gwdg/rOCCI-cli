@@ -40,10 +40,16 @@ module Occi::Cli
     def resources_to_json(occi_resources)
       # generate JSON document from Occi::Core::Resources
       if @output_format == :json_pretty
-        JSON.pretty_generate occi_resources.as_json
+        output = "[\n"
+        occi_resources.to_a.each { |r| output << JSON.pretty_generate(r.as_json.to_hash) }
+        output << "\n]"
       else
-        JSON.generate occi_resources.as_json
+        output = "["
+        occi_resources.to_a.each { |r| output << JSON.generate(r.as_json.to_hash) }
+        output << "]"
       end
+
+      output
     end
     alias_method :resources_to_json_pretty, :resources_to_json
     alias_method :mixins_to_json, :resources_to_json
