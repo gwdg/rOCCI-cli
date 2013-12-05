@@ -110,17 +110,11 @@ ruby -v
 Usage
 -----
 ### Client
-The OCCI gem includes a client you can use directly from shell with the following auth methods: x509 (with --password, --user-cred and --ca-path), basic (with --username and --password), digest (with --username and --password), none. If you won't set a password using --password, the client will ask for it later on. There is also an interactive mode, which will allow you to interact with the client through menus and answers to simple questions (this feature is still experimental).
+The OCCI gem includes a client you can use directly from shell with the following auth methods: x509 (with --password, --user-cred and --ca-path), basic (with --username and --password), digest (with --username and --password), none. If you won't set a password using --password, the client will ask for it later on.
 
 To find out more about available options and defaults use
 
     occi --help
-
-To run the client in an interactive mode use
-
-    occi --interactive
-    occi --interactive --endpoint https://<ENDPOINT>:<PORT>/
-    occi --interactive --endpoint https://<ENDPOINT>:<PORT>/ --auth x509
 
 To list available resources use
 
@@ -160,6 +154,12 @@ To delete a compute resource use
 
 Changelog
 ---------
+
+### Version 4.2
+* Droppped the interactive mode (it might return in the future)
+* Updated internals
+* Updated user interface and human-readable rendering
+* __Includes interface changes incompatible with v4.1.x__
 
 ### Version 4.1
 * Dropped Ruby 1.8.x support
