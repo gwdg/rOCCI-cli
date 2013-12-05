@@ -12,6 +12,7 @@ module Occi::Cli
     ACTIONS = [:list, :describe, :create, :delete, :trigger].freeze
     LOG_OUTPUTS = [:stdout, :stderr].freeze
     ALLOWED_CONTEXT_VARS = [:public_key, :user_data].freeze
+    LOG_LEVELS = [:debug, :error, :fatal, :info, :unknown, :warn].freeze
 
     MIXIN_REGEXP = /^(https?:\/\/\S+?)#(\S+)$/
     CONTEXT_REGEXP = ATTR_REGEXP = /^(.+?)=(.+)$/
@@ -23,11 +24,10 @@ module Occi::Cli
       options = OpenStruct.new
       
       options.debug = false
-      options.verbose = false
       
       options.log = {}
       options.log[:out] = STDERR
-      options.log[:level] = Occi::Log::WARN
+      options.log[:level] = Occi::Log::ERROR
 
       options.filter = nil
       options.dump_model = false
@@ -257,6 +257,15 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
           options.output_format = output_format
         end
 
+        opts.on("-b",
+                "--log-level LEVEL",
+                LOG_LEVELS,
+                "Set the specified logging level, less intrusive than debug mode") do |log_level|
+          unless options.log[:level] == Occi::Log::DEBUG
+            options.log[:level] = Occi::Log.const_get(log_level.to_s.upcase)
+          end
+        end
+
         opts.on_tail("-m",
                      "--dump-model",
                      "Contact the endpoint and dump its model") do |dump_model|
@@ -268,13 +277,6 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
                      "Enable debugging messages") do |debug|
           options.debug = debug
           options.log[:level] = Occi::Log::DEBUG
-        end
-
-        opts.on_tail("-b",
-                     "--verbose",
-                     "Be more verbose, less intrusive than debug mode") do |verbose|
-          options.verbose = verbose
-          options.log[:level] = Occi::Log::INFO unless options.log[:level] == Occi::Log::DEBUG
         end
 
         opts.on_tail("-h",
