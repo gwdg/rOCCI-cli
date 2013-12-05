@@ -55,7 +55,7 @@ begin
 rescue OpenSSL::SSL::SSLError => ssl_ex
   # generic SSL error raised whilst establishing a connection
   # possibly an untrusted server cert or invalid user credentials 
-  Occi::Log.error "An SSL error occurred! Please, make sure your credentials " \
+  Occi::Log.fatal "An SSL error occurred! Please, make sure your credentials " \
                   "are valid and recognized by the endpoint! Message: #{ssl_ex.message}"
 
   raise ssl_ex if options.debug
@@ -63,7 +63,7 @@ rescue OpenSSL::SSL::SSLError => ssl_ex
 rescue OpenSSL::PKey::RSAError => key_ex
   # generic X509 error raised whilst reading user's credentials from a file
   # possibly a wrong password or mangled/unsupported credential format
-  Occi::Log.error "An X509 error occurred! Please, make sure you are using the " \
+  Occi::Log.fatal "An X509 error occurred! Please, make sure you are using the " \
                   "right password and the file contains both your certificate " \
                   "and your private key! Message: #{key_ex.message}"
 
@@ -72,12 +72,16 @@ rescue OpenSSL::PKey::RSAError => key_ex
 rescue Errno::ECONNREFUSED
   # the remote server has refused our connection attempt(s)
   # there is nothing we can do ...
-  Occi::Log.error "Connection refused by #{options.endpoint}!"
+  Occi::Log.fatal "Connection refused by #{options.endpoint}!"
+  exit!
+rescue Errno::ETIMEDOUT
+  # connection attempt timed out
+  Occi::Log.fatal "Connection to #{options.endpoint} timed out!"
   exit!
 rescue Exception => ex
   # something went wrong during the execution
   # hide the stack trace in non-debug modes
-  Occi::Log.error "An error occurred! Message: #{ex.message}"
+  Occi::Log.fatal "An error occurred! Message: #{ex.message}"
 
   raise ex if options.debug
   exit!
@@ -87,7 +91,7 @@ end
 if options.dump_model
 
   if !model.respond_to? :instance_variables
-    Occi::Log.error "Your Ruby doesn't support 'instance_variables' calls!"
+    Occi::Log.fatal "Your Ruby doesn't support 'instance_variables' calls!"
     exit!
   end
 
@@ -150,12 +154,12 @@ begin
 rescue Errno::ECONNREFUSED
   # remote server refused our connection attempt(s)
   # even though initial connect was successful
-  Occi::Log.error "Connection refused by #{options.endpoint}!"
+  Occi::Log.fatal "Connection refused by #{options.endpoint}!"
   exit!
 rescue Exception => ex
   # something went wrong during the execution
   # hide the stack trace in non-debug modes
-  Occi::Log.error "An error occurred! Message: #{ex.message}"
+  Occi::Log.fatal "An error occurred! Message: #{ex.message}"
 
   raise ex if options.debug
   exit!
