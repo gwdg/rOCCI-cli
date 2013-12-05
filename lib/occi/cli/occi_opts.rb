@@ -3,8 +3,6 @@ require 'optparse'
 require 'uri'
 require 'base64'
 
-require 'occi/cli/resource_output_factory'
-
 module Occi::Cli
 
   class OcciOpts

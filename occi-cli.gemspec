@@ -20,7 +20,6 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
 
   gem.add_dependency 'occi-api', '= 4.2.0.beta.2'
-  gem.add_dependency 'highline'
   gem.add_dependency 'json'
 
   gem.required_ruby_version     = ">= 1.9.3"

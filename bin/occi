@@ -16,7 +16,6 @@
 
 require 'rubygems'
 require 'pp'
-require 'highline/import'
 require 'openssl'
 
 require 'occi-cli'
