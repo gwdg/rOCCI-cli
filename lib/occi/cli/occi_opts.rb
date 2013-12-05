@@ -3,8 +3,6 @@ require 'optparse'
 require 'uri'
 require 'base64'
 
-require 'occi/cli/resource_output_factory'
-
 module Occi::Cli
 
   class OcciOpts
@@ -34,8 +32,6 @@ module Occi::Cli
       options.filter = nil
       options.dump_model = false
 
-      options.interactive = false
-
       options.endpoint = "https://localhost:3300/"
       
       options.auth = {}
@@ -61,7 +57,6 @@ module Occi::Cli
         opts.banner = %{Usage: occi [OPTIONS]
 
 Examples:
-occi --interactive --endpoint https://localhost:3300/ --auth x509
 
 occi --endpoint https://localhost:3300/ --action list --resource os_tpl --auth x509
 
@@ -75,12 +70,6 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
 
         opts.separator ""
         opts.separator "Options:"
-
-        opts.on("-i",
-                "--interactive",
-                "Run as an interactive client without additional arguments") do |interactive|
-          options.interactive = interactive
-        end
 
         opts.on("-e",
                 "--endpoint URI",
@@ -269,7 +258,7 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
 
         opts.on_tail("-m",
                      "--dump-model",
-                     "Contact the endpoint and dump its model, cannot be used with the interactive mode") do |dump_model|
+                     "Contact the endpoint and dump its model") do |dump_model|
           options.dump_model = dump_model
         end
 
@@ -336,16 +325,6 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
     private
 
     def self.check_restrictions(options, opts)
-      if options.interactive && options.dump_model
-        if @@quiet
-          exit false
-        else
-          puts "You cannot use '--dump-model' and '--interactive' at the same time!"
-          puts opts
-          exit!
-        end
-      end
-
       if !options.dump_model && options.filter
         if @@quiet
           exit false
@@ -366,7 +345,7 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
         end
       end
 
-      return if options.interactive || options.dump_model
+      return if options.dump_model
 
       mandatory = []
 
