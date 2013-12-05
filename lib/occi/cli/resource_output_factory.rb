@@ -52,9 +52,9 @@ module Occi::Cli
     def locations_to_json(url_locations)
       # generate JSON document from an array of strings
       if @output_format == :json_pretty
-        JSON.pretty_generate locations
+        JSON.pretty_generate url_locations
       else
-        JSON.generate locations
+        JSON.generate url_locations
       end
     end
     alias_method :locations_to_json_pretty, :locations_to_json
