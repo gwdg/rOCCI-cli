@@ -56,10 +56,15 @@ module Occi::Cli::Helpers::CreateHelper
 
   def helper_attach_mixins(options, res)
     return unless options.mixins
-    Occi::Log.debug "with mixins: #{options.mixins}"
+    Occi::Log.debug "with mixins: #{options.mixins.inspect}"
 
     options.mixins.to_a.each do |mxn|
       Occi::Log.debug "Adding mixin #{mxn.inspect} to #{options.resource.inspect}"
+
+      mxn = model.get_by_id(mxn.type_identifier)
+      raise Occi::Cli::Errors::MixinLookupError,
+            "The specified mixin is not declared in the model! #{mxn.type_identifier.inspect}" if mxn.blank?
+
       res.mixins << mxn
     end
   end
@@ -67,7 +72,7 @@ module Occi::Cli::Helpers::CreateHelper
   def helper_attach_context_vars(options, res)
     # TODO: find a better/universal way to do contextualization
     return unless options.context_vars
-    Occi::Log.debug "with context variables: #{options.context_vars}"
+    Occi::Log.debug "with context variables: #{options.context_vars.inspect}"
 
     options.context_vars.each_pair do |var, val|
       schema = nil
@@ -82,6 +87,7 @@ module Occi::Cli::Helpers::CreateHelper
         schema = "http://schemas.openstack.org/compute/instance#"
         mxn_attrs['org.openstack.compute.user_data'] = {}
       else
+        Occi::Log.warn "Unknown context variable! #{var.to_s.inspect}"
         schema = "http://schemas.ogf.org/occi/core#"
       end
 
@@ -95,7 +101,7 @@ module Occi::Cli::Helpers::CreateHelper
       when :user_data
         res.attributes['org.openstack.compute.user_data'] = val
       else
-        # do nothing
+        Occi::Log.warn "Not setting attributes for an unknown context variable! #{var.to_s.inspect}"
       end
     end
   end
