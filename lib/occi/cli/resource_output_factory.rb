@@ -39,11 +39,21 @@ module Occi::Cli
 
     def resources_to_json(occi_resources)
       # generate JSON document from Occi::Core::Resources
+      occi_resources = occi_resources.to_a
+
       if @output_format == :json_pretty
-        JSON.pretty_generate occi_resources.as_json
+        output_first = "[\n"
+        output_ary = occi_resources.collect { |r| JSON.pretty_generate(r.as_json.to_hash) }
+        separator = ",\n"
+        output_last = "\n]"
       else
-        JSON.generate occi_resources.as_json
+        output_first = "["
+        output_ary = occi_resources.collect { |r| JSON.generate(r.as_json.to_hash) }
+        separator = ","
+        output_last = "]"
       end
+
+      "#{output_first}#{output_ary.join(separator)}#{output_last}"
     end
     alias_method :resources_to_json_pretty, :resources_to_json
     alias_method :mixins_to_json, :resources_to_json
@@ -52,9 +62,9 @@ module Occi::Cli
     def locations_to_json(url_locations)
       # generate JSON document from an array of strings
       if @output_format == :json_pretty
-        JSON.pretty_generate locations
+        JSON.pretty_generate url_locations
       else
-        JSON.generate locations
+        JSON.generate url_locations
       end
     end
     alias_method :locations_to_json_pretty, :locations_to_json
