@@ -46,7 +46,7 @@ module Occi::Cli
 
       options.mixins = Occi::Core::Mixins.new
       options.links = nil
-      options.attributes = nil
+      options.attributes = Occi::Core::Attributes.new
       options.context_vars = nil
       
       # TODO: change media type back to occi+json after the rOCCI-server update
@@ -161,14 +161,15 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
         opts.on("-t",
                 "--attribute ATTRS",
                 Array,
-                "Comma separated attributes for new resources such as title=\"Name\", required") do |attributes|
-          options.attributes ||= {}
+                "Comma separated attributes for new resources such as occi.core.title=\"Name\", required") do |attributes|
+          options.attributes ||= Occi::Core::Attributes.new
 
           attributes.each do |attribute|
             ary = ATTR_REGEXP.match(attribute).to_a.drop 1
             raise ArgumentError, "Attribute must always contain ATTR=VALUE pairs!" unless ary.length == 2
 
-            options.attributes[ary[0].to_sym] = ary[1]
+            ary[0] = "occi.core.#{ary[0]}" unless ary[0].include?('.')
+            options.attributes[ary[0]] = ary[1]
           end
         end
 
@@ -369,8 +370,8 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
       check_hash options, mandatory, opts
 
       if check_attrs
-        mandatory = [:title]
-        check_hash options.attributes, mandatory, opts
+        mandatory = ["occi.core.title"]
+        check_attributes options.attributes, mandatory, opts
       end
     end
 
@@ -379,7 +380,28 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
         hash = hash.marshal_dump
       end
 
-      missing = mandatory.select{ |param| hash[param].nil? }
+      missing = mandatory.select { |param| hash[param].nil? }
+      report_missing missing, opts
+    end
+
+    def self.check_attributes(attributes, mandatory, opts)
+      missing = []
+      attributes = Occi::Core::Attributes.new(attributes)
+
+      mandatory.each do |attribute|
+        begin
+          attributes[attribute]
+          raise Occi::Errors::AttributeMissingError,
+                "Attribute #{attribute.inspect} is empty!" unless attributes[attribute]
+        rescue Occi::Errors::AttributeMissingError
+          missing << attribute
+        end
+      end
+
+      report_missing missing, opts
+    end
+
+    def self.report_missing(missing, opts)
       unless missing.empty?
         if @@quiet
           exit false

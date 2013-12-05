@@ -4,25 +4,7 @@ module Occi::Cli::Helpers::CreateHelper
     location = nil
 
     if resource_types.include?(options.resource) || resource_type_identifiers.include?(options.resource)
-      Occi::Log.debug "#{options.resource.inspect} is a resource type."
-      raise "Not yet implemented!" unless options.resource.include? "compute"
-
-      res = resource options.resource
-
-      Occi::Log.debug "Creating #{options.resource.inspect}:\n#{res.inspect}"
-
-      helper_attach_links(options, res)
-      helper_attach_mixins(options, res)
-      helper_attach_context_vars(options, res)
-
-      # TODO: set other attributes
-      # TODO: OCCI-OS uses occi.compute.hostname instead of title
-      res.title = options.attributes[:title]
-      res.hostname = options.attributes[:title]
-
-      Occi::Log.debug "Creating #{options.resource.inspect}:\n#{res.inspect}"
-
-      location = create res
+      location = helper_create_resource(options)
     else
       Occi::Log.warn "I have no idea what #{options.resource.inspect} is ..."
       raise "Unknown resource #{options.resource.inspect}, there is nothing to create here!"
@@ -31,6 +13,41 @@ module Occi::Cli::Helpers::CreateHelper
     return location if output.nil?
 
     puts location
+  end
+
+  def helper_create_resource(options)
+    Occi::Log.debug "#{options.resource.inspect} is a resource type."
+
+    # TODO: implement the rest
+    raise "Not yet implemented!" unless options.resource.include? "compute"
+
+    res = resource(options.resource)
+
+    Occi::Log.debug "Creating #{options.resource.inspect}: #{res.inspect}"
+
+    helper_attach_mixins(options, res)
+
+    if res.kind_of? Occi::Infrastructure::Compute
+      helper_attach_links(options, res)
+      # TODO: context vars are only attributes!
+      helper_attach_context_vars(options, res)
+    end
+
+    options.attributes.names.each_pair do |attribute, value|
+      res.attributes[attribute.to_s] = value
+    end
+
+    # TODO: OCCI-OS uses occi.compute.hostname instead of title
+    if res.kind_of? Occi::Infrastructure::Compute
+      res.hostname = options.attributes["occi.core.title"] if res.hostname.blank?
+    end
+
+    # TODO: enable check
+    #res.check
+
+    Occi::Log.debug "Creating #{options.resource.inspect}: #{res.inspect}"
+
+    create res
   end
 
   def helper_attach_links(options, res)
