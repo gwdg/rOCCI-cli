@@ -382,7 +382,7 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
         hash = hash.marshal_dump
       end
 
-      missing = mandatory.select { |param| hash[param].nil? }
+      missing = mandatory.select { |param| hash[param].blank? }
       report_missing missing, opts
     end
 
