@@ -1,5 +1,6 @@
 require 'optparse'
 require 'uri'
+require 'erb'
 
 # load all parts of OcciOpts
 Dir[File.join(File.dirname(__FILE__), 'occi_opts', '*.rb')].each { |file| require file.gsub('.rb', '') }
@@ -24,19 +25,7 @@ module Occi::Cli
       set_defaults(options)
 
       opts = OptionParser.new do |opts|
-        opts.banner = %{Usage: occi [OPTIONS]
-
-Examples:
-
-occi --endpoint https://localhost:3300/ --action list --resource os_tpl --auth x509
-
-occi --endpoint https://localhost:3300/ --action list --resource resource_tpl --auth x509
-
-occi --endpoint https://localhost:3300/ --action describe --resource os_tpl#debian6 --auth x509
-
-occi --endpoint https://localhost:3300/ --action create --resource compute --mixin os_tpl#debian6 --mixin resource_tpl#small --attribute title="My rOCCI VM" --auth x509
-
-occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd4f654sf65g4-s5fg65sfg465sfg-sf65g46sf5g4sdfg --auth x509}
+        opts.banner = %{Usage: occi [OPTIONS]}
 
         opts.separator ""
         opts.separator "Options:"
@@ -218,6 +207,22 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
                 "Set the specified logging level, only: [#{LOG_LEVELS.join('|')}]") do |log_level|
           unless options.log.level == Occi::Log::DEBUG
             options.log.level = Occi::Log.const_get(log_level.to_s.upcase)
+          end
+        end
+
+        opts.on_tail("-z",
+                     "--examples",
+                     "Show usage examples") do |examples|
+          if examples
+            if @@quiet
+              exit true
+            else
+              file = "#{File.expand_path('..', __FILE__)}/occi_opts/cli_examples.erb"
+              template = ERB.new(File.new(file).read, nil, '-')
+
+              puts template.result(binding)
+              exit! true
+            end
           end
         end
 
