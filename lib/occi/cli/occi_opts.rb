@@ -51,7 +51,7 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
         opts.on("-n",
                 "--auth METHOD",
                 AUTH_METHODS,
-                "Authentication method, only: '#{AUTH_METHODS.join(', ')}', defaults " \
+                "Authentication method, only: [#{AUTH_METHODS.join('|')}], defaults " \
                 "to '#{options.auth.type}'") do |auth|
           options.auth.type = auth.to_s
         end
@@ -120,7 +120,7 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
         opts.on("-y",
                 "--media-type MEDIA_TYPE",
                 MEDIA_TYPES,
-                "Media type for client <-> server communication, only: '#{MEDIA_TYPES.join(', ')}', " \
+                "Media type for client <-> server communication, only: [#{MEDIA_TYPES.join('|')}], " \
                 "defaults to '#{options.media_type}'") do |media_type|
           options.media_type = media_type
         end
@@ -136,7 +136,7 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
                 "--attribute ATTRS",
                 Array,
                 "Comma separated attributes for new resource instances, mandatory: " \
-                "'#{REQ_CREATE_ATTRS.join(', ')}'") do |attributes|
+                "[#{REQ_CREATE_ATTRS.join(', ')}]") do |attributes|
           options.attributes ||= Occi::Core::Attributes.new
 
           attributes.each do |attribute|
@@ -149,7 +149,7 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
                 "--context CTX_VARS",
                 Array,
                 "Comma separated context variables for new 'compute' resource instances, " \
-                "only: '#{Occi::Cli::OcciOpts::Helper::ALLOWED_CONTEXT_VARS.join(', ')}'") do |context|
+                "only: [#{Occi::Cli::OcciOpts::Helper::ALLOWED_CONTEXT_VARS.join(', ')}]") do |context|
           options.context_vars ||= {}
 
           context.each do |ctx|
@@ -166,9 +166,9 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
         end
 
         opts.on("-M",
-                "--mixin NAME",
+                "--mixin IDENTIFIER",
                 Array,
-                "Identifier of a mixin, formatted as SCHEME#NAME or TYPE#NAME") do |mixins|
+                "Identifier of a mixin, formatted as SCHEME#TERM or SHORT_SCHEME#TERM") do |mixins|
           options.mixins ||= Occi::Core::Mixins.new
 
           mixins.each do |mixin|
@@ -200,14 +200,14 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
         opts.on("-l",
                 "--log-to OUTPUT",
                 LOG_OUTPUTS,
-                "Log to the specified device, defaults to '#{options.log.out.to_s}'") do |log_to|
-          options.log.out = STDOUT if log_to.to_s.downcase == "stdout"
+                "Log to the specified device, only: [#{LOG_OUTPUTS.join('|')}], defaults to 'stderr'") do |log_to|
+          options.log.out = STDOUT if log_to.to_s == "stdout"
         end
 
         opts.on("-o",
                 "--output-format FORMAT",
                 Occi::Cli::ResourceOutputFactory.allowed_formats,
-                "Output format, only: '#{Occi::Cli::ResourceOutputFactory.allowed_formats.join(', ')}', " \
+                "Output format, only: [#{Occi::Cli::ResourceOutputFactory.allowed_formats.join('|')}], " \
                 "defaults to '#{options.output_format}'") do |output_format|
           options.output_format = output_format
         end
@@ -215,7 +215,7 @@ occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd
         opts.on("-b",
                 "--log-level LEVEL",
                 LOG_LEVELS,
-                "Set the specified logging level, only: '#{LOG_LEVELS.join(', ')}'") do |log_level|
+                "Set the specified logging level, only: [#{LOG_LEVELS.join('|')}]") do |log_level|
           unless options.log.level == Occi::Log::DEBUG
             options.log.level = Occi::Log.const_get(log_level.to_s.upcase)
           end
