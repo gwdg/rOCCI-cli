@@ -1,0 +1,11 @@
+Examples:
+
+occi --endpoint https://localhost:3300/ --action list --resource os_tpl --auth x509
+
+occi --endpoint https://localhost:3300/ --action list --resource resource_tpl --auth x509
+
+occi --endpoint https://localhost:3300/ --action describe --resource os_tpl#debian6 --auth x509
+
+occi --endpoint https://localhost:3300/ --action create --resource compute --mixin os_tpl#debian6 --mixin resource_tpl#small --attribute title="My rOCCI VM" --auth x509
+
+occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd4f654sf65g4-s5fg65sfg465sfg-sf65g46sf5g4sdfg --auth x509
