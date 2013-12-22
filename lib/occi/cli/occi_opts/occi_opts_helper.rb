@@ -30,7 +30,7 @@ module Occi::Cli
           context_data = Base64.encode64(context_data).gsub("\n", '')
         end
 
-        { symbol => context_data.strip }
+        [symbol, context_data.strip]
       end
 
       def self.parse_attribute(attribute)
@@ -39,7 +39,7 @@ module Occi::Cli
 
         ary[0] = "occi.core.#{ary[0]}" unless ary[0].include?('.')
         
-        { ary[0] => ary[1] }
+        ary
       end
 
       def self.parse_mixin(mixin)
