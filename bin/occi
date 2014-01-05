@@ -139,11 +139,9 @@ begin
       helper_describe options, output
     when :create
       helper_create options, output
-    when :attach
-      Occi::Log.info "Skipping 'attach', not implemented yet!"
-    when :detach
-      Occi::Log.info "Skipping 'detach', not implemented yet!"
-    when :delete
+    when :link
+      helper_link options, output
+    when :delete, :unlink
       helper_delete options, output
     when :trigger
       helper_trigger options, output

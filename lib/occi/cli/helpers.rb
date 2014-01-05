@@ -10,3 +10,4 @@ extend Occi::Cli::Helpers::DescribeHelper
 extend Occi::Cli::Helpers::CreateHelper
 extend Occi::Cli::Helpers::DeleteHelper
 extend Occi::Cli::Helpers::TriggerHelper
+extend Occi::Cli::Helpers::LinkHelper
