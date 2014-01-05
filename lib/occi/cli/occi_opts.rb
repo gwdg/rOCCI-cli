@@ -11,7 +11,7 @@ module Occi::Cli
 
     AUTH_METHODS = [:x509, :basic, :digest, :none].freeze
     MEDIA_TYPES = ["application/occi+json", "application/occi+xml", "text/plain,text/occi", "text/plain"].freeze
-    ACTIONS = [:list, :describe, :create, :delete, :trigger].freeze
+    ACTIONS = [:list, :describe, :create, :delete, :trigger, :link, :unlink].freeze
     LOG_OUTPUTS = [:stdout, :stderr].freeze
     LOG_LEVELS = [:debug, :error, :fatal, :info, :unknown, :warn].freeze
 
@@ -180,10 +180,10 @@ module Occi::Cli
         end
 
         opts.on("-g",
-                "--trigger-action TRIGGER",
+                "--trigger-action TRIGGER_ACTION",
                 String,
-                "Action to be triggered on the resource") do |trigger_action|
-          options.trigger_action = trigger_action
+                "Action to be triggered on the resource, formatted as SCHEME#TERM or SHORT_SCHEME#TERM") do |trigger_action|
+          options.trigger_action = Occi::Cli::OcciOpts::Helper.parse_action(trigger_action)
         end
 
         opts.on("-l",
@@ -369,6 +369,10 @@ module Occi::Cli
         end
 
         mandatory << :attributes
+      end
+
+      if options.action == :link
+        mandatory << :links
       end
 
       mandatory.concat [:resource, :action]

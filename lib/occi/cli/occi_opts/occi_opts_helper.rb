@@ -6,7 +6,7 @@ module Occi::Cli
 
       ALLOWED_CONTEXT_VARS = [:public_key, :user_data].freeze
 
-      MIXIN_REGEXP = /^(\S+?)#(\S+)$/
+      MIXIN_REGEXP = ACTION_REGEXP = /^(\S+?)#(\S+)$/
       CONTEXT_REGEXP = ATTR_REGEXP = /^(\S+?)=(.+)$/
 
       def self.parse_context_variable(cvar)
@@ -44,9 +44,16 @@ module Occi::Cli
 
       def self.parse_mixin(mixin)
         parts = MIXIN_REGEXP.match(mixin).to_a.drop(1)
-        raise "Unknown mixin format '#{mixin.inspect}'! Use SCHEME#NAME or TYPE#NAME!" unless parts.length == 2
+        raise "Unknown mixin format '#{mixin.inspect}'! Use SCHEME#TERM or SHORT_SCHEME#TERM!" unless parts.length == 2
 
         Occi::Core::Mixin.new("#{parts[0]}#", parts[1])
+      end
+
+      def self.parse_action(action)
+        parts = ACTION_REGEXP.match(action).to_a.drop(1)
+        raise "Unknown action format '#{action.inspect}'! Use SCHEME#TERM or SHORT_SCHEME#TERM!" unless parts.length == 2
+
+        Occi::Core::Action.new("#{parts[0]}#", parts[1])
       end
 
     end
