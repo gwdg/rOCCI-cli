@@ -11,8 +11,8 @@ module Occi::Cli::Helpers::LinkHelper
       raise "You can assign only one link at a time!"
     end
 
-    link = options.links.first
-    unless link.start_with?(options.endpoint) || link.start_with?('/')
+    link = sanitize_instance_link(options.links.first)
+    unless link.start_with?('/')
       raise "Given link is not a valid instance URL! #{link.inspect}"
     end
 
@@ -45,8 +45,8 @@ module Occi::Cli::Helpers::LinkHelper
     Occi::Log.debug "Linking #{link.inspect} to #{options.resource.inspect}"
 
     link_instance = Occi::Core::Link.new(link_kind)
-    link_instance.source = options.resource
-    link_instance.target = link.start_with?(options.endpoint) ? link : "#{options.endpoint.chomp('/')}#{link}"
+    link_instance.source = sanitize_instance_link(options.resource)
+    link_instance.target = link
 
     helper_link_attach_mixins(options.mixins, link_instance)
 
