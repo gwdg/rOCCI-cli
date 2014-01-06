@@ -18,19 +18,16 @@ module Occi::Cli::Helpers::CreateHelper
   def helper_create_resource(options)
     Occi::Log.debug "#{options.resource.inspect} is a resource type."
 
-    # TODO: implement the rest
-    raise "Not yet implemented!" unless options.resource.include? "compute"
-
     res = resource(options.resource)
 
     Occi::Log.debug "Creating #{options.resource.inspect}: #{res.inspect}"
 
-    helper_attach_mixins(options, res)
+    helper_create_attach_mixins(options, res)
 
     if res.kind_of? Occi::Infrastructure::Compute
-      helper_attach_links(options, res)
+      helper_create_attach_links(options, res)
       # TODO: context vars are only attributes!
-      helper_attach_context_vars(options, res)
+      helper_create_attach_context_vars(options, res)
     end
 
     options.attributes.names.each_pair do |attribute, value|
@@ -50,7 +47,7 @@ module Occi::Cli::Helpers::CreateHelper
     create res
   end
 
-  def helper_attach_links(options, res)
+  def helper_create_attach_links(options, res)
     return unless options.links
     Occi::Log.debug "with links: #{options.links.inspect}"
 
@@ -71,7 +68,7 @@ module Occi::Cli::Helpers::CreateHelper
     end
   end
 
-  def helper_attach_mixins(options, res)
+  def helper_create_attach_mixins(options, res)
     return unless options.mixins
     Occi::Log.debug "with mixins: #{options.mixins.inspect}"
 
@@ -86,7 +83,7 @@ module Occi::Cli::Helpers::CreateHelper
     end
   end
 
-  def helper_attach_context_vars(options, res)
+  def helper_create_attach_context_vars(options, res)
     # TODO: find a better/universal way to do contextualization
     return unless options.context_vars
     Occi::Log.debug "with context variables: #{options.context_vars.inspect}"
