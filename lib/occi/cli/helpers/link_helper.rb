@@ -67,7 +67,7 @@ module Occi::Cli::Helpers::LinkHelper
 
       orig_mxn = model.get_by_id(mxn.type_identifier)
       if orig_mxn.blank?
-        orig_mxn = mixin(mxn.term, mxn.scheme, true)
+        orig_mxn = mixin(mxn.term, mxn.scheme.chomp('#'), true)
         raise Occi::Cli::Errors::MixinLookupError,
             "The specified mixin is not declared in the model! #{mxn.type_identifier.inspect}" if orig_mxn.blank?
       end
