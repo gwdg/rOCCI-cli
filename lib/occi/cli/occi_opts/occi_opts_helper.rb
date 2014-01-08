@@ -9,6 +9,11 @@ module Occi::Cli
       MIXIN_REGEXP = ACTION_REGEXP = /^(\S+?)#(\S+)$/
       CONTEXT_REGEXP = ATTR_REGEXP = /^(\S+?)=(.+)$/
 
+      ATTR_NUM_EXP = /num\((?<number>\d+)\)/
+      ATTR_BOOL_EXP = /bool\((?<bool>true|false)\)/
+      ATTR_FLOAT_EXP = /float\((?<float>\d+\.\d+)\)/
+      ATTR_INVALID_EXP = /num\(.*\)|bool\(.*\)|float\(.*\)/
+
       def self.parse_context_variable(cvar)
         ary = CONTEXT_REGEXP.match(cvar).to_a.drop 1
         raise ArgumentError, "Context variables must always contain ATTR=VALUE pairs!" unless ary.length == 2
@@ -38,6 +43,7 @@ module Occi::Cli
         raise ArgumentError, "Attribute must always contain ATTR=VALUE pairs!" unless ary.length == 2
 
         ary[0] = "occi.core.#{ary[0]}" unless ary[0].include?('.')
+        ary[1] = parse_attribute_value(ary[1])
         
         ary
       end
@@ -54,6 +60,23 @@ module Occi::Cli
         raise "Unknown action format '#{action.inspect}'! Use SCHEME#TERM or SHORT_SCHEME#TERM!" unless parts.length == 2
 
         Occi::Core::Action.new("#{parts[0]}#", parts[1])
+      end
+
+      def self.parse_attribute_value(value)
+        result = value
+
+        ATTR_NUM_EXP =~ value
+        result = Regexp.last_match(:number).to_i if Regexp.last_match(:number)
+
+        ATTR_BOOL_EXP =~ value
+        result = (Regexp.last_match(:bool) == 'true' ? true : false) if Regexp.last_match(:bool)
+
+        ATTR_FLOAT_EXP =~ value
+        result = Regexp.last_match(:float).to_f if Regexp.last_match(:float)
+
+        raise ArgumentError, "Failed to cast attribute value #{result.inspect}!" if ATTR_INVALID_EXP =~ result.to_s
+
+        result
       end
 
     end
