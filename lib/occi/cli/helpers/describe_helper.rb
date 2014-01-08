@@ -11,6 +11,17 @@ module Occi::Cli::Helpers::DescribeHelper
 
       found = Occi::Core::Mixins.new
       found.merge mixins(options.resource)
+    elsif options.resource.include?('#')
+      Occi::Log.debug "#{options.resource.inspect} might be a specific mixin identifier."
+
+      potential_mixin = options.resource.split('/').last.split('#')
+      raise "Given resource is not a specific mixin identifier! #{options.resource.inspect}" unless potential_mixin.size == 2
+
+      mxn = mixin(potential_mixin[1], potential_mixin[0], true)
+      raise "Given mixin could not be found in the model! #{options.resource.inspect}" if mxn.blank?
+
+      found = Occi::Core::Mixins.new
+      found << mxn
     else
       Occi::Log.error "I have no idea what #{options.resource.inspect} is ..."
       raise "Unknown resource #{options.resource.inspect}, there is nothing to describe here!"
