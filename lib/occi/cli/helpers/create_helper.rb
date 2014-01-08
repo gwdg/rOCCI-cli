@@ -75,11 +75,14 @@ module Occi::Cli::Helpers::CreateHelper
     options.mixins.to_a.each do |mxn|
       Occi::Log.debug "Adding mixin #{mxn.inspect} to #{options.resource.inspect}"
 
-      mxn = model.get_by_id(mxn.type_identifier)
-      raise Occi::Cli::Errors::MixinLookupError,
-            "The specified mixin is not declared in the model! #{mxn.type_identifier.inspect}" if mxn.blank?
+      orig_mxn = model.get_by_id(mxn.type_identifier)
+      if orig_mxn.blank?
+        orig_mxn = mixin(mxn.term, mxn.scheme, true)
+        raise Occi::Cli::Errors::MixinLookupError,
+            "The specified mixin is not declared in the model! #{mxn.type_identifier.inspect}" if orig_mxn.blank?
+      end
 
-      res.mixins << mxn
+      res.mixins << orig_mxn
     end
   end
 
