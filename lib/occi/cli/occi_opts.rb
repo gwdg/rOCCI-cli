@@ -168,8 +168,7 @@ module Occi::Cli
         opts.on("-j",
                 "--link URI",
                 Array,
-                "Link this resource to the resource being created, only for action " \
-                "'create' and resource 'compute'") do |links|
+                "URI of an instance to be linked with the given resource, applicable for actions 'create' and 'link'") do |links|
           options.links ||= []
 
           links.each do |link|
@@ -180,7 +179,7 @@ module Occi::Cli
         end
 
         opts.on("-g",
-                "--trigger-action TRIGGER_ACTION",
+                "--trigger-action ACTION",
                 String,
                 "Action to be triggered on the resource, formatted as SCHEME#TERM or SHORT_SCHEME#TERM") do |trigger_action|
           options.trigger_action = Occi::Cli::OcciOpts::Helper.parse_action(trigger_action)
