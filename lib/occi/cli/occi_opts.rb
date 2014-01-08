@@ -362,10 +362,8 @@ module Occi::Cli
       end
 
       if options.action == :create
-        if options.links
+        if options.mixins.blank? && options.resource == 'compute'
           mandatory << :links
-        else
-          mandatory << :mixins
         end
 
         mandatory << :attributes
