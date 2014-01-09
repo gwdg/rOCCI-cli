@@ -1,11 +1,75 @@
-Examples:
+<%- ENDPOINT = 'http://localhost:3000/' -%>
+# Examples
 
-occi --endpoint https://localhost:3300/ --action list --resource os_tpl --auth x509
+## Quick reference guide
 
-occi --endpoint https://localhost:3300/ --action list --resource resource_tpl --auth x509
+occi --endpoint <%= ENDPOINT -%> --action list --resource os_tpl
+occi --endpoint <%= ENDPOINT -%> --action list --resource resource_tpl
+occi --endpoint <%= ENDPOINT -%> --action describe --resource os_tpl#debian6
+occi --endpoint <%= ENDPOINT -%> --action create --resource compute --mixin os_tpl#debian6 --mixin resource_tpl#small --attribute title="My rOCCI VM"
+occi --endpoint <%= ENDPOINT -%> --action delete --resource /compute/65sd4f654sf65g4-s5fg65sfg465sfg-sf65g46sf5g4sdfg
 
-occi --endpoint https://localhost:3300/ --action describe --resource os_tpl#debian6 --auth x509
+## Listing resources
+<% %w(compute network storage os_tpl resource_tpl).each do |res| %>
+occi --endpoint <%= ENDPOINT -%> --action list --resource <%= res -%>
+<% end %>
 
-occi --endpoint https://localhost:3300/ --action create --resource compute --mixin os_tpl#debian6 --mixin resource_tpl#small --attribute title="My rOCCI VM" --auth x509
+## Describing resources
+<% %w(compute network storage os_tpl resource_tpl).each do |res| %>
+occi --endpoint <%= ENDPOINT -%> --action describe --resource <%= res -%>
+<% end %>
 
-occi --endpoint https://localhost:3300/ --action delete --resource /compute/65sd4f654sf65g4-s5fg65sfg465sfg-sf65g46sf5g4sdfg --auth x509
+## Creating resources
+<% %w(compute network storage).each do |res| %>
+occi --endpoint <%= ENDPOINT -%> --action create [ --attribute attribute_name='attribute_value' ]+ [ --mixin mixin_type#mixin_term ]+ --resource <%= res -%>
+<% if res == 'compute' %>
+occi --endpoint <%= ENDPOINT -%> --action create [ --attribute attribute_name='attribute_value' ]+ [ --link /resource_type/instance_id ]+ --resource <%= res -%>
+<% end -%>
+<% end %>
+
+## Linking/unlinking resources
+<% %w(compute).each do |res| %>
+<%- %w(network storage).each do |res_link| -%>
+occi --endpoint <%= ENDPOINT -%> --action link --resource /<%= res -%>/instance_id --link /<%= res_link -%>/instance_id
+<%- end -%>
+<% end -%>
+
+## Deleting resources
+<% %w(compute network storage).each do |res| %>
+occi --endpoint <%= ENDPOINT -%> --action delete --resource <%= res -%>
+<% end %>
+
+## Triggering actions on resources
+<% %w(compute network storage).each do |res| %>
+occi --endpoint <%= ENDPOINT -%> --action trigger --trigger-action action_type#action_term [ --attribute attribute_name='attribute_value' ]+ --resource <%= res -%>
+<% end %>
+
+## Other
+
+### Authentication
+
+occi --endpoint <%= ENDPOINT -%> [ --auth none ]
+occi --endpoint <%= ENDPOINT -%> --auth basic [ --username user ] [ --password pass ]
+occi --endpoint <%= ENDPOINT -%> --auth digest [ --username user ] [ --password pass ]
+occi --endpoint <%= ENDPOINT -%> --auth x509 [ --user-cred /home/user/.globus/usercred.pem ] [ --ca-file /etc/grid-security/certificates/ca.pem ] [ --ca-path /etc/grid-security/certificates ] [ --voms ] [ --password pass ]
+occi --endpoint <%= ENDPOINT -%> --auth x509 --user-cred /home/user/.globus/usercred.pem
+occi --endpoint <%= ENDPOINT -%> --auth x509 --user-cred /tmp/x509_1000 --voms
+occi --endpoint <%= ENDPOINT -%> --auth x509 --user-cred /tmp/x509_1000 --ca-path /etc/grid-security/certificates --voms
+
+### Media types
+<% Occi::Cli::OcciOpts::MEDIA_TYPES.each do |mt| %>
+occi --endpoint <%= ENDPOINT -%> [ ... ] --media-type <%= mt -%>
+<% end %>
+
+### Output formats
+<% Occi::Cli::ResourceOutputFactory.allowed_formats.each do |af| %>
+occi --endpoint <%= ENDPOINT -%> [ ... ] --output-format <%= af -%>
+<% end %>
+
+### Attribute values (type-casting)
+
+occi --endpoint <%= ENDPOINT -%> [ ... ] --attribute attribute_name='attribute_value'
+occi --endpoint <%= ENDPOINT -%> [ ... ] --attribute attribute_name='num(attribute_value)'
+occi --endpoint <%= ENDPOINT -%> [ ... ] --attribute attribute_name='float(attribute_value)'
+occi --endpoint <%= ENDPOINT -%> [ ... ] --attribute attribute_name='bool(attribute_value)'
+
