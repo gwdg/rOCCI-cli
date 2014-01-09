@@ -1,25 +1,26 @@
 <%- # We always get Occi::Core::Resources -%>
 <%- occi_resources.each do |resource| -%>
-[<%= resource.kind.type_identifier %>]
+<%= '#' * (HighLine::SystemExtensions.terminal_size.first - 1) %>
+[[ <%= resource.kind.type_identifier %> ]]
     <%- resource.attributes.names.each_pair do |attribute, value| -%>
-    <%= attribute %> = <%= value %>
+<%= attribute %> = <%= value %>
     <%- end -%>
 
-    <%- resource.links.each do |link| -%>
-    [<%= link.kind.type_identifier %>]
+Links:
+    <%- resource.links.each do |link| %>
+    [[ <%= link.kind.type_identifier %> ]]
         <%- link.attributes.names.each_pair do |attribute, value| -%>
-        <%= attribute %> = <%= value %>
+    <%= attribute %> = <%= value %>
         <%- end -%>
-
     <%- end -%>
 
-    <%- resource.mixins.each do |mixin| -%>
-    [<%= mixin.type_identifier %>]
-        Title:        <%= mixin.title %>
-        Term:         <%= mixin.term %>
-        Location:     <%= mixin.location %>
-
+Mixins:
+    <%- resource.mixins.each do |mixin| %>
+    [[ <%= mixin.type_identifier %> ]]
+    title:        <%= mixin.title %>
+    term:         <%= mixin.term %>
+    location:     <%= mixin.location %>
     <%- end -%>
-
+<%= '#' * (HighLine::SystemExtensions.terminal_size.first - 1) -%>
 
 <%- end -%>

@@ -1,9 +1,9 @@
 <%- # We always get Occi::Core::Mixins -%>
 <%- occi_resources.each do |mixin| -%>
-[<%= mixin.type_identifier %>]
-	Title:        <%= mixin.title %>
-	Term:         <%= mixin.term %>
-	Location:     <%= mixin.location %>
-
-
+<%= '#' * (HighLine::SystemExtensions.terminal_size.first - 1) %>
+[[ <%= mixin.type_identifier %> ]]
+title:        <%= mixin.title %>
+term:         <%= mixin.term %>
+location:     <%= mixin.location %>
+<%= '#' * (HighLine::SystemExtensions.terminal_size.first - 1) %>
 <%- end -%>
