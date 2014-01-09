@@ -9,8 +9,8 @@ module Occi::Cli::Helpers::DescribeHelper
     elsif mixin_types.include?(options.resource) || mixin_type_identifiers.include?(options.resource)
       Occi::Log.debug "#{options.resource.inspect} is a mixin type or type identifier."
 
-      found = Occi::Core::Mixins.new
-      found.merge mixins(options.resource)
+      found = mixins(options.resource)
+      found = mixins(options.resource, true) if found.blank?
     elsif options.resource.include?('#')
       Occi::Log.debug "#{options.resource.inspect} might be a specific mixin identifier."
 
