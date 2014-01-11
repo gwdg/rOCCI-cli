@@ -1,6 +1,6 @@
 <%- # We always get Occi::Core::Resources -%>
+<%- unless occi_resources.blank? -%><%= '#' * (HighLine::SystemExtensions.terminal_size.first - 1) %><%- end %>
 <%- occi_resources.each do |resource| -%>
-<%= '#' * (HighLine::SystemExtensions.terminal_size.first - 1) %>
 [[ <%= resource.kind.type_identifier %> ]]
     <%- resource.attributes.names.each_pair do |attribute, value| -%>
 <%= attribute %> = <%= value %>
