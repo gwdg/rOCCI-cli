@@ -7,7 +7,7 @@
     <%- end -%>
 
 Links:
-    <%- resource.links.each do |link| %>
+    <%- resource.links.to_a.reject { |l| l.rel && l.rel.to_s.match(/^\S+\/action#\S+$/) }.each do |link| %>
     [[ <%= link.kind.type_identifier %> ]]
         <%- link.attributes.names.each_pair do |attribute, value| -%>
     <%= attribute %> = <%= value %>
@@ -20,6 +20,11 @@ Mixins:
     title:        <%= mixin.title %>
     term:         <%= mixin.term %>
     location:     <%= mixin.location %>
+    <%- end -%>
+
+Actions:
+    <%- resource.links.to_a.select { |l| l.rel && l.rel.to_s.match(/^\S+\/action#\S+$/) }.each do |action| %>
+    [[ <%= action.rel.to_s %> ]]
     <%- end -%>
 <%= '#' * (HighLine::SystemExtensions.terminal_size.first - 1) -%>
 
