@@ -19,7 +19,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = `git ls-files -- {test,spec}/*`.split("\n")
   gem.require_paths = ["lib"]
 
-  gem.add_dependency 'occi-api', '= 4.2.0.beta.9'
+  gem.add_dependency 'occi-api', '= 4.2.0.beta.10'
   gem.add_dependency 'json'
   gem.add_dependency 'highline'
 
