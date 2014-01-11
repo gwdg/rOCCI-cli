@@ -6,7 +6,7 @@ module Occi::Cli
 
       ALLOWED_CONTEXT_VARS = [:public_key, :user_data].freeze
 
-      MIXIN_REGEXP = ACTION_REGEXP = /^(\S+?)#(\S+)$/
+      MIXIN_REGEXP = /^(\S+?)#(\S+)$/
       CONTEXT_REGEXP = ATTR_REGEXP = /^(\S+?)=(.+)$/
 
       ATTR_NUM_EXP = /num\((?<number>\d+)\)/
@@ -27,7 +27,7 @@ module Occi::Cli
 
         context_data = ary[1]
         if context_data.gsub!(/^file:\/\//,'')
-          raise 'File does not exist! #{context_data}' unless File.exist? context_data
+          raise "File does not exist! #{context_data.inspect}" unless File.exist? context_data
           context_data = File.read(context_data)
         end
 
@@ -42,7 +42,7 @@ module Occi::Cli
         ary = ATTR_REGEXP.match(attribute).to_a.drop 1
         raise ArgumentError, "Attribute must always contain ATTR=VALUE pairs!" unless ary.length == 2
 
-        ary[0] = "occi.core.#{ary[0]}" unless ary[0].include?('.')
+        # type-cast the value, if necessary
         ary[1] = parse_attribute_value(ary[1])
         
         ary
@@ -50,16 +50,20 @@ module Occi::Cli
 
       def self.parse_mixin(mixin)
         parts = MIXIN_REGEXP.match(mixin).to_a.drop(1)
-        raise "Unknown mixin format '#{mixin.inspect}'! Use SCHEME#TERM or SHORT_SCHEME#TERM!" unless parts.length == 2
+        raise "Unknown mixin format #{mixin.inspect}! Use SCHEME#TERM or SHORT_SCHEME#TERM!" unless parts.length == 2
 
         Occi::Core::Mixin.new("#{parts[0]}#", parts[1])
       end
 
       def self.parse_action(action)
-        parts = ACTION_REGEXP.match(action).to_a.drop(1)
-        raise "Unknown action format '#{action.inspect}'! Use SCHEME#TERM or SHORT_SCHEME#TERM!" unless parts.length == 2
+        raise "Unknown action format #{action.inspect}! Use SCHEME#TERM or TERM!" if action.blank?
+        parts = action.split('#')
 
-        Occi::Core::Action.new("#{parts[0]}#", parts[1])
+        if parts.size == 2
+          Occi::Core::Action.new("#{parts[0]}#", parts[1])
+        else
+          Occi::Core::Action.new("action#", parts.last)
+        end
       end
 
       def self.parse_attribute_value(value)

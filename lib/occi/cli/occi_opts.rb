@@ -33,7 +33,7 @@ module Occi::Cli
         opts.on("-e",
                 "--endpoint URI",
                 String,
-                "OCCI server URI, defaults to '#{options.endpoint}'") do |endpoint|
+                "OCCI server URI, defaults to #{options.endpoint.inspect}") do |endpoint|
           options.endpoint = URI(endpoint).to_s
         end
 
@@ -41,7 +41,7 @@ module Occi::Cli
                 "--auth METHOD",
                 AUTH_METHODS,
                 "Authentication method, only: [#{AUTH_METHODS.join('|')}], defaults " \
-                "to '#{options.auth.type}'") do |auth|
+                "to #{options.auth.type.inspect}") do |auth|
           options.auth.type = auth.to_s
         end
 
@@ -49,7 +49,7 @@ module Occi::Cli
                 "--username USER",
                 String,
                 "Username for basic or digest authentication, defaults to " \
-                "'#{options.auth.username}'") do |username|
+                "#{options.auth.username.inspect}") do |username|
           options.auth.username = username
         end
 
@@ -64,7 +64,7 @@ module Occi::Cli
         opts.on("-c",
                 "--ca-path PATH",
                 String,
-                "Path to CA certificates directory, defaults to '#{options.auth.ca_path}'") do |ca_path|
+                "Path to CA certificates directory, defaults to #{options.auth.ca_path.inspect}") do |ca_path|
           raise ArgumentError, "Path specified in --ca-path is not a directory!" unless File.directory? ca_path
           raise ArgumentError, "Path specified in --ca-path is not readable!" unless File.readable? ca_path
 
@@ -92,7 +92,7 @@ module Occi::Cli
         opts.on("-x",
                 "--user-cred FILE",
                 String,
-                "Path to user's x509 credentials, defaults to '#{options.auth.user_cert}'") do |user_cred|
+                "Path to user's x509 credentials, defaults to #{options.auth.user_cert.inspect}") do |user_cred|
           raise ArgumentError, "File specified in --user-cred is not a file!" unless File.file? user_cred
           raise ArgumentError, "File specified in --user-cred is not readable!" unless File.readable? user_cred
 
@@ -110,7 +110,7 @@ module Occi::Cli
                 "--media-type MEDIA_TYPE",
                 MEDIA_TYPES,
                 "Media type for client <-> server communication, only: [#{MEDIA_TYPES.join('|')}], " \
-                "defaults to '#{options.media_type}'") do |media_type|
+                "defaults to #{options.media_type.inspect}") do |media_type|
           options.media_type = media_type
         end
 
@@ -122,9 +122,9 @@ module Occi::Cli
         end
 
         opts.on("-t",
-                "--attribute ATTRS",
+                "--attribute ATTR",
                 Array,
-                "Comma separated attributes for new resource instances, mandatory: " \
+                "An \"attribute='value'\" pair, mandatory attrs for creating new resource instances: " \
                 "[#{REQ_CREATE_ATTRS.join(', ')}]") do |attributes|
           options.attributes ||= Occi::Core::Attributes.new
 
@@ -135,9 +135,9 @@ module Occi::Cli
         end
 
         opts.on("-T",
-                "--context CTX_VARS",
+                "--context CTX_VAR",
                 Array,
-                "Comma separated context variables for new 'compute' resource instances, " \
+                "A \"context_variable='value'\" pair for new 'compute' resource instances, " \
                 "only: [#{Occi::Cli::OcciOpts::Helper::ALLOWED_CONTEXT_VARS.join(', ')}]") do |context|
           options.context_vars ||= {}
 
@@ -181,7 +181,7 @@ module Occi::Cli
         opts.on("-g",
                 "--trigger-action ACTION",
                 String,
-                "Action to be triggered on the resource, formatted as SCHEME#TERM or SHORT_SCHEME#TERM") do |trigger_action|
+                "Action to be triggered on the resource, formatted as SCHEME#TERM or TERM") do |trigger_action|
           options.trigger_action = Occi::Cli::OcciOpts::Helper.parse_action(trigger_action)
         end
 
@@ -196,7 +196,7 @@ module Occi::Cli
                 "--output-format FORMAT",
                 Occi::Cli::ResourceOutputFactory.allowed_formats,
                 "Output format, only: [#{Occi::Cli::ResourceOutputFactory.allowed_formats.join('|')}], " \
-                "defaults to '#{options.output_format}'") do |output_format|
+                "defaults to #{options.output_format.to_s.inspect}") do |output_format|
           options.output_format = output_format
         end
 
