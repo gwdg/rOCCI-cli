@@ -45,6 +45,14 @@ module Occi::Cli
           options.auth.type = auth.to_s
         end
 
+        opts.on("-k",
+                "--timeout SEC",
+                Integer,
+                "Default timeout for all HTTP connections, in seconds") do |timeout|
+          raise "Timeout has to be a number larger than 0!" if timeout < 1
+          options.timeout = timeout
+        end
+
         opts.on("-u",
                 "--username USER",
                 String,
@@ -297,6 +305,7 @@ module Occi::Cli
       options.dump_model = false
 
       options.endpoint = "http://localhost:3000"
+      options.timeout = nil
 
       options.auth = {}
       options.auth.type = "none"
