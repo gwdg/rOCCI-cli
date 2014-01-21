@@ -13,7 +13,7 @@ module Occi::Cli::Helpers::TriggerHelper
     action_instance.attributes = options.attributes
 
     if trigger(options.resource, action_instance)
-      Occi::Log.info "Action #{options.trigger_action.action.type_identifier.inspect} " \
+      Occi::Log.info "Action #{options.trigger_action.type_identifier.inspect} " \
                      "triggered on #{options.resource.inspect}!"
     else
       message = "Failed to trigger an action on #{options.resource.inspect}!"
