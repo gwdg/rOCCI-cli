@@ -96,11 +96,11 @@ module Occi::Cli::Helpers::CreateHelper
       mxn_attrs = Occi::Core::Attributes.new
 
       case var
-      when :public_key
+      when 'public_key', :public_key
         schema = "http://schemas.openstack.org/instance/credentials#"
         mxn_attrs['org.openstack.credentials.publickey.name'] = {}
         mxn_attrs['org.openstack.credentials.publickey.data'] = {}
-      when :user_data
+      when 'user_data', :user_data
         schema = "http://schemas.openstack.org/compute/instance#"
         mxn_attrs['org.openstack.compute.user_data'] = {}
       else
@@ -112,10 +112,10 @@ module Occi::Cli::Helpers::CreateHelper
       res.mixins << mxn
 
       case var
-      when :public_key
+      when 'public_key', :public_key
         res.attributes['org.openstack.credentials.publickey.name'] = 'Public SSH key'
         res.attributes['org.openstack.credentials.publickey.data'] = val
-      when :user_data
+      when 'user_data', :user_data
         res.attributes['org.openstack.compute.user_data'] = val
       else
         Occi::Log.warn "Not setting attributes for an unknown context variable! #{var.to_s.inspect}"
