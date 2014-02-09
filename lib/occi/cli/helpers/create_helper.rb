@@ -6,7 +6,7 @@ module Occi::Cli::Helpers::CreateHelper
     if resource_types.include?(options.resource) || resource_type_identifiers.include?(options.resource)
       location = helper_create_resource(options)
     else
-      Occi::Log.warn "I have no idea what #{options.resource.inspect} is ..."
+      Occi::Cli::Log.warn "I have no idea what #{options.resource.inspect} is ..."
       raise "Unknown resource #{options.resource.inspect}, there is nothing to create here!"
     end
 
@@ -16,11 +16,11 @@ module Occi::Cli::Helpers::CreateHelper
   end
 
   def helper_create_resource(options)
-    Occi::Log.debug "#{options.resource.inspect} is a resource type."
+    Occi::Cli::Log.debug "#{options.resource.inspect} is a resource type."
 
     res = resource(options.resource)
 
-    Occi::Log.debug "Creating #{options.resource.inspect}: #{res.inspect}"
+    Occi::Cli::Log.debug "Creating #{options.resource.inspect}: #{res.inspect}"
 
     helper_create_attach_mixins(options, res)
 
@@ -42,14 +42,14 @@ module Occi::Cli::Helpers::CreateHelper
     # TODO: enable check
     #res.check
 
-    Occi::Log.debug "Creating #{options.resource.inspect}: #{res.inspect}"
+    Occi::Cli::Log.debug "Creating #{options.resource.inspect}: #{res.inspect}"
 
     create res
   end
 
   def helper_create_attach_links(options, res)
     return unless options.links
-    Occi::Log.debug "with links: #{options.links.inspect}"
+    Occi::Cli::Log.debug "with links: #{options.links.inspect}"
 
     options.links.each do |link|
       if link.start_with? options.endpoint
@@ -57,10 +57,10 @@ module Occi::Cli::Helpers::CreateHelper
       end
 
       if link.include? "/storage/"
-        Occi::Log.debug "Adding storagelink to #{options.resource.inspect}"
+        Occi::Cli::Log.debug "Adding storagelink to #{options.resource.inspect}"
         res.storagelink link
       elsif link.include? "/network/"
-        Occi::Log.debug "Adding networkinterface to #{options.resource.inspect}"
+        Occi::Cli::Log.debug "Adding networkinterface to #{options.resource.inspect}"
         res.networkinterface link
       else
         raise "Unknown link type #{link.inspect}, stopping here!"
@@ -70,10 +70,10 @@ module Occi::Cli::Helpers::CreateHelper
 
   def helper_create_attach_mixins(options, res)
     return unless options.mixins
-    Occi::Log.debug "with mixins: #{options.mixins.inspect}"
+    Occi::Cli::Log.debug "with mixins: #{options.mixins.inspect}"
 
     options.mixins.to_a.each do |mxn|
-      Occi::Log.debug "Adding mixin #{mxn.inspect} to #{options.resource.inspect}"
+      Occi::Cli::Log.debug "Adding mixin #{mxn.inspect} to #{options.resource.inspect}"
 
       orig_mxn = model.get_by_id(mxn.type_identifier)
       if orig_mxn.blank?
@@ -89,7 +89,7 @@ module Occi::Cli::Helpers::CreateHelper
   def helper_create_attach_context_vars(options, res)
     # TODO: find a better/universal way to do contextualization
     return unless options.context_vars
-    Occi::Log.debug "with context variables: #{options.context_vars.inspect}"
+    Occi::Cli::Log.debug "with context variables: #{options.context_vars.inspect}"
 
     options.context_vars.each_pair do |var, val|
       schema = nil
@@ -104,7 +104,7 @@ module Occi::Cli::Helpers::CreateHelper
         schema = "http://schemas.openstack.org/compute/instance#"
         mxn_attrs['org.openstack.compute.user_data'] = {}
       else
-        Occi::Log.warn "Unknown context variable! #{var.to_s.inspect}"
+        Occi::Cli::Log.warn "Unknown context variable! #{var.to_s.inspect}"
         schema = "http://schemas.ogf.org/occi/core#"
       end
 
@@ -118,7 +118,7 @@ module Occi::Cli::Helpers::CreateHelper
       when 'user_data', :user_data
         res.attributes['org.openstack.compute.user_data'] = val
       else
-        Occi::Log.warn "Not setting attributes for an unknown context variable! #{var.to_s.inspect}"
+        Occi::Cli::Log.warn "Not setting attributes for an unknown context variable! #{var.to_s.inspect}"
       end
     end
   end

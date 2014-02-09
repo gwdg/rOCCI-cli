@@ -4,7 +4,7 @@ module Occi::Cli::Helpers::TriggerHelper
     unless resource_types.include?(options.resource) || resource_type_identifiers.include?(options.resource) \
                                                      || \
            options.resource.start_with?(options.endpoint) || options.resource.start_with?('/')
-      Occi::Log.error "I have no idea what #{options.resource.inspect} is ..."
+      Occi::Cli::Log.error "I have no idea what #{options.resource.inspect} is ..."
       raise "Unknown resource #{options.resource.inspect}, there is nothing to trigger here!"
     end
 
@@ -13,11 +13,11 @@ module Occi::Cli::Helpers::TriggerHelper
     action_instance.attributes = options.attributes
 
     if trigger(options.resource, action_instance)
-      Occi::Log.info "Action #{options.trigger_action.type_identifier.inspect} " \
+      Occi::Cli::Log.info "Action #{options.trigger_action.type_identifier.inspect} " \
                      "triggered on #{options.resource.inspect}!"
     else
       message = "Failed to trigger an action on #{options.resource.inspect}!"
-      Occi::Log.error message
+      Occi::Cli::Log.error message
       raise message
     end
 
@@ -30,7 +30,7 @@ module Occi::Cli::Helpers::TriggerHelper
     ti = action_type_identifier(action.term)
     if ti.blank?
       message = "Failed to identify action #{action.type_identifier.inspect} in the model!"
-      Occi::Log.error message
+      Occi::Cli::Log.error message
       raise message
     end
 

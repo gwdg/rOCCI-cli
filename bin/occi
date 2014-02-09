@@ -25,20 +25,20 @@ require 'occi-cli'
 options = Occi::Cli::OcciOpts.parse ARGV
 
 # initialize logger
-logger = Occi::Log.new(options.log[:out])
+logger = Occi::Cli::Log.new(options.log[:out])
 logger.level = options.log[:level]
-options.log[:logger] = logger
+options.log[:logger] = logger.api_log
 
 # initialize output factory
 output = Occi::Cli::ResourceOutputFactory.new options.output_format
 
-Occi::Log.info "Starting OCCI client ..."
-Occi::Log.debug "Options: #{options}"
+Occi::Cli::Log.info "Starting OCCI client ..."
+Occi::Cli::Log.debug "Options: #{options}"
 
 # running with an empty password, we should ask the user for one
 # if auth method is not "none"
 if options.auth[:password].nil? || options.auth[:user_cert_password].nil?
-  Occi::Log.debug "Password is not set, asking for it now ..."
+  Occi::Cli::Log.debug "Password is not set, asking for it now ..."
 
   options.auth[:user_cert_password] = ask("Enter a password: ") {
       |q| q.echo = '*'
@@ -49,14 +49,14 @@ end
 
 # establish a connection
 begin
-  Occi::Log.info "Establishing a connection to #{options.endpoint} ..."
+  Occi::Cli::Log.info "Establishing a connection to #{options.endpoint} ..."
 
   options.auto_connect = true
   connect :http, options
 rescue OpenSSL::SSL::SSLError => ssl_ex
   # generic SSL error raised whilst establishing a connection
   # possibly an untrusted server cert or invalid user credentials 
-  Occi::Log.fatal "An SSL error occurred! Please, make sure your credentials " \
+  Occi::Cli::Log.fatal "An SSL error occurred! Please, make sure your credentials " \
                   "are valid and recognized by the endpoint! Message: #{ssl_ex.message}"
 
   raise ssl_ex if options.debug
@@ -64,7 +64,7 @@ rescue OpenSSL::SSL::SSLError => ssl_ex
 rescue OpenSSL::PKey::RSAError => key_ex
   # generic X509 error raised whilst reading user's credentials from a file
   # possibly a wrong password or mangled/unsupported credential format
-  Occi::Log.fatal "An X509 error occurred! Please, make sure you are using the " \
+  Occi::Cli::Log.fatal "An X509 error occurred! Please, make sure you are using the " \
                   "right password and the file contains both your certificate " \
                   "and your private key! Message: #{key_ex.message}"
 
@@ -73,16 +73,16 @@ rescue OpenSSL::PKey::RSAError => key_ex
 rescue Errno::ECONNREFUSED
   # the remote server has refused our connection attempt(s)
   # there is nothing we can do ...
-  Occi::Log.fatal "Connection refused by #{options.endpoint}!"
+  Occi::Cli::Log.fatal "Connection refused by #{options.endpoint}!"
   exit!
 rescue Errno::ETIMEDOUT
   # connection attempt timed out
-  Occi::Log.fatal "Connection to #{options.endpoint} timed out!"
+  Occi::Cli::Log.fatal "Connection to #{options.endpoint} timed out!"
   exit!
 rescue Exception => ex
   # something went wrong during the execution
   # hide the stack trace in non-debug modes
-  Occi::Log.fatal "An error occurred! Message: #{ex.message}"
+  Occi::Cli::Log.fatal "An error occurred! Message: #{ex.message}"
 
   raise ex if options.debug
   exit!
@@ -92,7 +92,7 @@ end
 if options.dump_model
 
   if !model.respond_to? :instance_variables
-    Occi::Log.fatal "Your Ruby doesn't support 'instance_variables' calls!"
+    Occi::Cli::Log.fatal "Your Ruby doesn't support 'instance_variables' calls!"
     exit!
   end
 
@@ -130,7 +130,7 @@ end
 # start executing actions
 begin
 
-  Occi::Log.info "Executing action #{options.action.to_s} on #{options.resource} ..."
+  Occi::Cli::Log.info "Executing action #{options.action.to_s} on #{options.resource} ..."
 
   # call the appropriate helper and then format its output
   case options.action
@@ -149,7 +149,7 @@ begin
     when :refresh
       refresh
     when :skip, :test, :dry_run
-      Occi::Log.info "Just a connection test ..."
+      Occi::Cli::Log.info "Just a connection test ..."
     else
       raise "Unknown action [#{options.action}]!"
   end
@@ -157,15 +157,15 @@ begin
 rescue Errno::ECONNREFUSED
   # remote server refused our connection attempt(s)
   # even though initial connect was successful
-  Occi::Log.fatal "Connection refused by #{options.endpoint}!"
+  Occi::Cli::Log.fatal "Connection refused by #{options.endpoint}!"
   exit!
 rescue Exception => ex
   # something went wrong during the execution
   # hide the stack trace in non-debug modes
-  Occi::Log.fatal "An error occurred! Message: #{ex.message}"
+  Occi::Cli::Log.fatal "An error occurred! Message: #{ex.message}"
 
   raise ex if options.debug
   exit!
 end
 
-Occi::Log.info "OCCI client is shutting down ..."
+Occi::Cli::Log.info "OCCI client is shutting down ..."

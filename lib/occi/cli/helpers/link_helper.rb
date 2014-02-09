@@ -42,7 +42,7 @@ module Occi::Cli::Helpers::LinkHelper
   end
 
   def helper_link_create_link(options, link_kind, link)
-    Occi::Log.debug "Linking #{link.inspect} to #{options.resource.inspect}"
+    Occi::Cli::Log.debug "Linking #{link.inspect} to #{options.resource.inspect}"
 
     link_instance = Occi::Core::Link.new(link_kind)
     link_instance.source = sanitize_instance_link(options.resource)
@@ -60,10 +60,10 @@ module Occi::Cli::Helpers::LinkHelper
   def helper_link_attach_mixins(mixins, link)
     return if mixins.blank?
 
-    Occi::Log.debug "with mixins: #{mixins.inspect}"
+    Occi::Cli::Log.debug "with mixins: #{mixins.inspect}"
 
     mixins.to_a.each do |mxn|
-      Occi::Log.debug "Adding mixin #{mxn.inspect} to #{link.inspect}"
+      Occi::Cli::Log.debug "Adding mixin #{mxn.inspect} to #{link.inspect}"
 
       orig_mxn = model.get_by_id(mxn.type_identifier)
       if orig_mxn.blank?

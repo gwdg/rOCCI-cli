@@ -4,13 +4,13 @@ module Occi::Cli::Helpers::ListHelper
     found = []
 
     if resource_types.include?(options.resource) || resource_type_identifiers.include?(options.resource)
-      Occi::Log.debug "#{options.resource.inspect} is a resource type."
+      Occi::Cli::Log.debug "#{options.resource.inspect} is a resource type."
       found = list options.resource
     elsif mixin_types.include?(options.resource) || mixin_type_identifiers.include?(options.resource)
-      Occi::Log.debug "#{options.resource.inspect} is a mixin type."
+      Occi::Cli::Log.debug "#{options.resource.inspect} is a mixin type."
       found = mixin_list options.resource
     else
-      Occi::Log.error "I have no idea what #{options.resource.inspect} is ..."
+      Occi::Cli::Log.error "I have no idea what #{options.resource.inspect} is ..."
       raise "Unknown resource #{options.resource.inspect}, there is nothing to list here!"
     end
 

@@ -212,8 +212,8 @@ module Occi::Cli
                 "--log-level LEVEL",
                 LOG_LEVELS,
                 "Set the specified logging level, only: [#{LOG_LEVELS.join('|')}]") do |log_level|
-          unless options.log.level == Occi::Log::DEBUG
-            options.log.level = Occi::Log.const_get(log_level.to_s.upcase)
+          unless options.log.level == Occi::Cli::Log::DEBUG
+            options.log.level = Occi::Cli::Log.const_get(log_level.to_s.upcase)
           end
         end
 
@@ -243,7 +243,7 @@ module Occi::Cli
                      "--debug",
                      "Enable debugging messages") do |debug|
           options.debug = debug
-          options.log.level = Occi::Log::DEBUG
+          options.log.level = Occi::Cli::Log::DEBUG
         end
 
         opts.on_tail("-h",
@@ -299,7 +299,7 @@ module Occi::Cli
 
       options.log = {}
       options.log.out = STDERR
-      options.log.level = Occi::Log::ERROR
+      options.log.level = Occi::Cli::Log::ERROR
 
       options.filter = nil
       options.dump_model = false
