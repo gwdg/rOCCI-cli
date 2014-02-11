@@ -6,7 +6,7 @@
 occi --endpoint <%= ENDPOINT -%> --action list --resource os_tpl
 occi --endpoint <%= ENDPOINT -%> --action list --resource resource_tpl
 occi --endpoint <%= ENDPOINT -%> --action describe --resource os_tpl#debian6
-occi --endpoint <%= ENDPOINT -%> --action create --resource compute --mixin os_tpl#debian6 --mixin resource_tpl#small --attribute title="My rOCCI VM"
+occi --endpoint <%= ENDPOINT -%> --action create --resource compute --mixin os_tpl#debian6 --mixin resource_tpl#small --attribute occi.core.title="My rOCCI VM"
 occi --endpoint <%= ENDPOINT -%> --action delete --resource /compute/65sd4f654sf65g4-s5fg65sfg465sfg-sf65g46sf5g4sdfg
 
 ## Listing resources
@@ -41,7 +41,8 @@ occi --endpoint <%= ENDPOINT -%> --action delete --resource <%= res -%>
 
 ## Triggering actions on resources
 <% %w(compute network storage).each do |res| %>
-occi --endpoint <%= ENDPOINT -%> --action trigger --trigger-action action_type#action_term [ --attribute attribute_name='attribute_value' ]+ --resource <%= res -%>
+occi --endpoint <%= ENDPOINT -%> --action trigger --trigger-action action_scheme#action_term [ --attribute attribute_name='attribute_value' ]+ --resource <%= res -%>
+occi --endpoint <%= ENDPOINT -%> --action trigger --trigger-action action_term [ --attribute attribute_name='attribute_value' ]+ --resource <%= res -%>
 <% end %>
 
 ## Other
