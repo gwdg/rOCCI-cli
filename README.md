@@ -14,14 +14,10 @@ Requirements
 * RubyGems have to be installed
 * Rake has to be installed (e.g., `gem install rake`)
 
-### Dependencies
-* `libxslt1-dev` or `libxslt-devel`
-* `libxml2-dev`or `libxml2-devel`
-
 ### Examples
 #### For distros based on Debian:
 ~~~
-apt-get install ruby rubygems ruby-dev libxslt1-dev libxml2-dev
+apt-get install ruby rubygems ruby-dev
 ~~~
 ~~~
 ruby -v
@@ -31,7 +27,7 @@ ruby -v
 
 #### For distros based on RHEL:
 ~~~
-yum install libxml2-devel libxslt-devel ruby-devel openssl-devel gcc gcc-c++ ruby rubygems
+yum install ruby-devel openssl-devel gcc gcc-c++ ruby rubygems
 ~~~
 ~~~
 ruby -v
@@ -146,7 +142,7 @@ To describe a specific OS template or Resource template use
 
 To create a compute resource with mixins use
 
-    occi --endpoint https://<ENDPOINT>:<PORT>/ --action create --resource compute --mixin os_tpl#debian6 --mixin resource_tpl#small --attributes title="My rOCCI VM" --auth x509
+    occi --endpoint https://<ENDPOINT>:<PORT>/ --action create --resource compute --mixin os_tpl#debian6 --mixin resource_tpl#small --attribute occi.core.title="My rOCCI VM" --auth x509
 
 To delete a compute resource use
 
