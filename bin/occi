@@ -33,7 +33,7 @@ options.log[:logger] = logger.api_log
 output = Occi::Cli::ResourceOutputFactory.new options.output_format
 
 Occi::Cli::Log.info "Starting OCCI client ..."
-Occi::Cli::Log.debug "Options: #{options}"
+Occi::Cli::Log.debug "Options: #{options.inspect}"
 
 # running with an empty password, we should ask the user for one
 # if auth method is not "none"
@@ -49,7 +49,7 @@ end
 
 # establish a connection
 begin
-  Occi::Cli::Log.info "Establishing a connection to #{options.endpoint} ..."
+  Occi::Cli::Log.info "Establishing a connection to #{options.endpoint.inspect} ..."
 
   options.auto_connect = true
   connect :http, options
@@ -73,13 +73,13 @@ rescue OpenSSL::PKey::RSAError => key_ex
 rescue Errno::ECONNREFUSED
   # the remote server has refused our connection attempt(s)
   # there is nothing we can do ...
-  Occi::Cli::Log.fatal "Connection refused by #{options.endpoint}!"
+  Occi::Cli::Log.fatal "Connection refused by #{options.endpoint.inspect}!"
   exit!
-rescue Errno::ETIMEDOUT
+rescue Errno::ETIMEDOUT, Net::OpenTimeout, Net::ReadTimeout
   # connection attempt timed out
-  Occi::Cli::Log.fatal "Connection to #{options.endpoint} timed out!"
+  Occi::Cli::Log.fatal "Connection to #{options.endpoint.inspect} timed out!"
   exit!
-rescue Exception => ex
+rescue => ex
   # something went wrong during the execution
   # hide the stack trace in non-debug modes
   Occi::Cli::Log.fatal "An error occurred! Message: #{ex.message}"
@@ -101,7 +101,7 @@ if options.dump_model
   # iterate through available instance variables
   collection.instance_variables.each do |inst_var_sym|
     puts "#"*79
-    puts "Dumping #{inst_var_sym.to_s}:"
+    puts "Dumping #{inst_var_sym.to_s.inspect}:"
 
     inst_var = collection.instance_variable_get(inst_var_sym)
     next unless inst_var.respond_to? :each
@@ -130,7 +130,7 @@ end
 # start executing actions
 begin
 
-  Occi::Cli::Log.info "Executing action #{options.action.to_s} on #{options.resource} ..."
+  Occi::Cli::Log.info "Executing action #{options.action.inspect} on #{options.resource.inspect} ..."
 
   # call the appropriate helper and then format its output
   case options.action
@@ -151,15 +151,19 @@ begin
     when :skip, :test, :dry_run
       Occi::Cli::Log.info "Just a connection test ..."
     else
-      raise "Unknown action [#{options.action}]!"
+      raise "Unknown action #{options.action.inspect}!"
   end
 
 rescue Errno::ECONNREFUSED
   # remote server refused our connection attempt(s)
   # even though initial connect was successful
-  Occi::Cli::Log.fatal "Connection refused by #{options.endpoint}!"
+  Occi::Cli::Log.fatal "Connection refused by #{options.endpoint.inspect}!"
   exit!
-rescue Exception => ex
+rescue Errno::ETIMEDOUT, Net::OpenTimeout, Net::ReadTimeout
+  # connection attempt timed out
+  Occi::Cli::Log.fatal "Connection to #{options.endpoint.inspect} timed out!"
+  exit!
+rescue => ex
   # something went wrong during the execution
   # hide the stack trace in non-debug modes
   Occi::Cli::Log.fatal "An error occurred! Message: #{ex.message}"
