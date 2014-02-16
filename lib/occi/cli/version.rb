@@ -1,5 +1,5 @@
 module Occi
   module Cli
-    VERSION = "4.2.0.beta.17" unless defined?(::Occi::Cli::VERSION)
+    VERSION = "4.2.0.beta.18" unless defined?(::Occi::Cli::VERSION)
   end
 end
