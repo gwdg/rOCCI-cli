@@ -1,0 +1,18 @@
+<%- # We always get Occi::Core::Links -%>
+<%- unless occi_links.blank? -%><%= '#' * (HighLine::SystemExtensions.terminal_size.first - 1) %><%- end %>
+<%- occi_links.each do |link| -%>
+[[ <%= link.kind.type_identifier %> ]]
+    <%- link.attributes.names.each_pair do |attribute, value| -%>
+<%= attribute %> = <%= value %>
+    <%- end -%>
+
+Mixins:
+    <%- link.mixins.each do |mixin| %>
+    [[ <%= mixin.type_identifier %> ]]
+    title:        <%= mixin.title %>
+    term:         <%= mixin.term %>
+    location:     <%= mixin.location %>
+    <%- end -%>
+<%= '#' * (HighLine::SystemExtensions.terminal_size.first - 1) -%>
+
+<%- end -%>

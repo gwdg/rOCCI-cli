@@ -19,6 +19,8 @@ module Occi::Cli
       # construct a method name from data type and output format
       if data.kind_of? Occi::Core::Resources
         method = "resources_to_#{@output_format}".to_sym
+      elsif data.kind_of? Occi::Core::Links
+        method = "links_to_#{@output_format}".to_sym
       elsif data.kind_of? Occi::Core::Mixins
         method = "mixins_to_#{@output_format}".to_sym
       elsif data.kind_of? Array
@@ -56,6 +58,8 @@ module Occi::Cli
       "#{output_first}#{output_ary.join(separator)}#{output_last}"
     end
     alias_method :resources_to_json_pretty, :resources_to_json
+    alias_method :links_to_json, :resources_to_json
+    alias_method :links_to_json_pretty, :resources_to_json
     alias_method :mixins_to_json, :resources_to_json
     alias_method :mixins_to_json_pretty, :resources_to_json
 
@@ -70,7 +74,7 @@ module Occi::Cli
     alias_method :locations_to_json_pretty, :locations_to_json
 
     def resources_to_plain(occi_resources)
-      # using ERB templates for known resource and mixin types
+      # using ERB templates for known resource types
       file = "#{File.expand_path('..', __FILE__)}/templates/resources.erb"
       template = ERB.new(File.new(file).read, nil, '-')
 
@@ -80,13 +84,24 @@ module Occi::Cli
       formatted_output
     end
 
-    def mixins_to_plain(occi_resources)
-      # using ERB templates for known resource and mixin types
+    def links_to_plain(occi_links)
+      # using ERB templates for known link types
+      file = "#{File.expand_path('..', __FILE__)}/templates/links.erb"
+      template = ERB.new(File.new(file).read, nil, '-')
+
+      formatted_output = ""
+      formatted_output << template.result(binding) unless occi_links.blank?
+
+      formatted_output
+    end
+
+    def mixins_to_plain(occi_mixins)
+      # using ERB templates for known mixin types
       file = "#{File.expand_path('..', __FILE__)}/templates/mixins.erb"
       template = ERB.new(File.new(file).read, nil, '-')
 
       formatted_output = ""
-      formatted_output << template.result(binding) unless occi_resources.blank?
+      formatted_output << template.result(binding) unless occi_mixins.blank?
 
       formatted_output
     end
