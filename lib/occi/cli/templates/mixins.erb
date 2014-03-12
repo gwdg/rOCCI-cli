@@ -1,6 +1,6 @@
 <%- # We always get Occi::Core::Mixins -%>
-<%- unless occi_resources.blank? -%><%= '#' * (HighLine::SystemExtensions.terminal_size.first - 1) %><%- end %>
-<%- occi_resources.each do |mixin| -%>
+<%- unless occi_mixins.blank? -%><%= '#' * (HighLine::SystemExtensions.terminal_size.first - 1) %><%- end %>
+<%- occi_mixins.each do |mixin| -%>
 [[ <%= mixin.type_identifier %> ]]
 title:        <%= mixin.title %>
 term:         <%= mixin.term %>

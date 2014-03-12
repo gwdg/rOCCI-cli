@@ -4,8 +4,12 @@ module Occi::Cli::Helpers::DescribeHelper
     if resource_types.include?(options.resource) || resource_type_identifiers.include?(options.resource) || options.resource.start_with?(options.endpoint) || options.resource.start_with?('/')
       Occi::Cli::Log.debug "#{options.resource.inspect} is a resource type, type identifier or an actual resource."
 
-      found = Occi::Core::Resources.new
-      found.merge describe(options.resource)
+      resources_or_links = describe(options.resource)
+      if resources_or_links.kind_of?(Occi::Core::Resources) || resources_or_links.kind_of?(Occi::Core::Links)
+        found = resources_or_links
+      else
+        found = Occi::Core::Resources.new
+      end
     elsif mixin_types.include?(options.resource) || mixin_type_identifiers.include?(options.resource)
       Occi::Cli::Log.debug "#{options.resource.inspect} is a mixin type or type identifier."
 
