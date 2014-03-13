@@ -2,6 +2,7 @@
 <%- unless occi_links.blank? -%><%= '#' * (HighLine::SystemExtensions.terminal_size.first - 1) %><%- end %>
 <%- occi_links.each do |link| -%>
 [[ <%= link.kind.type_identifier %> ]]
+>> location: <%= link.location %>
     <%- link.attributes.names.each_pair do |attribute, value| -%>
 <%= attribute %> = <%= value %>
     <%- end -%>
@@ -12,6 +13,11 @@ Mixins:
     title:        <%= mixin.title %>
     term:         <%= mixin.term %>
     location:     <%= mixin.location %>
+    <%- end -%>
+
+Actions:
+    <%- link.actions.each do |action| %>
+    [[ <%= action.type_identifier %> ]]
     <%- end -%>
 <%= '#' * (HighLine::SystemExtensions.terminal_size.first - 1) -%>
 
