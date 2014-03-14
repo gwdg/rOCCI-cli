@@ -5,7 +5,7 @@ module Occi::Cli
 
   class ResourceOutputFactory
 
-    @@allowed_formats = [:json, :plain, :json_pretty].freeze
+    @@allowed_formats = [:json, :plain, :json_pretty, :json_extended, :json_extended_pretty].freeze
 
     attr_reader :output_format
 
@@ -43,14 +43,20 @@ module Occi::Cli
       # generate JSON document from Occi::Core::Resources
       occi_resources = occi_resources.to_a
 
-      if @output_format == :json_pretty
+      if @output_format.to_s.end_with? '_pretty'
         output_first = "[\n"
-        output_ary = occi_resources.collect { |r| JSON.pretty_generate(r.as_json.to_hash) }
+        output_ary = occi_resources.collect do |r|
+          local_hash = @output_format.to_s.include?('_extended') ? extended_json(r) : r.as_json.to_hash
+          JSON.pretty_generate(local_hash)
+        end
         separator = ",\n"
         output_last = "\n]"
       else
         output_first = "["
-        output_ary = occi_resources.collect { |r| JSON.generate(r.as_json.to_hash) }
+        output_ary = occi_resources.collect do |r|
+          local_hash = @output_format.to_s.include?('_extended') ? extended_json(r) : r.as_json.to_hash
+          JSON.generate(local_hash)
+        end
         separator = ","
         output_last = "]"
       end
@@ -63,6 +69,28 @@ module Occi::Cli
     alias_method :mixins_to_json, :resources_to_json
     alias_method :mixins_to_json_pretty, :resources_to_json
 
+    alias_method :resources_to_json_extended, :resources_to_json
+    alias_method :resources_to_json_extended_pretty, :resources_to_json
+    alias_method :links_to_json_extended, :resources_to_json
+    alias_method :links_to_json_extended_pretty, :resources_to_json
+    alias_method :mixins_to_json_extended, :resources_to_json
+    alias_method :mixins_to_json_extended_pretty, :resources_to_json
+
+    # Renders Occi::Core::Links as a full JSON, not just a String
+    # array.
+    #
+    # @param resource [Occi::Core::Resource] resource to be rendered into extended JSON
+    # @return [Hash] extended JSON represented as a Hash instance
+    def extended_json(resource)
+      return resource.as_json.to_hash unless resource.respond_to?(:links)
+      return resource.as_json.to_hash unless resource.links.kind_of?(Occi::Core::Links)
+
+      links = resource.links
+      ext_json = resource.as_json
+      ext_json.links = links.as_json
+      ext_json.to_hash
+    end
+
     def locations_to_json(url_locations)
       # generate JSON document from an array of strings
       if @output_format == :json_pretty
@@ -72,6 +100,8 @@ module Occi::Cli
       end
     end
     alias_method :locations_to_json_pretty, :locations_to_json
+    alias_method :locations_to_json_extended_pretty, :locations_to_json
+    alias_method :locations_to_json_extended, :locations_to_json
 
     def resources_to_plain(occi_resources)
       # using ERB templates for known resource types
