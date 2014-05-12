@@ -89,6 +89,12 @@ module Occi::Cli
           options.auth.ca_file = ca_file
         end
 
+        opts.on("-s",
+                "--skip-ca-check",
+                "Skip server certificate verification [NOT recommended]") do
+          silence_warnings { OpenSSL::SSL.const_set(:VERIFY_PEER, OpenSSL::SSL::VERIFY_NONE) }
+        end
+
         opts.on("-F",
                 "--filter CATEGORY",
                 String,
