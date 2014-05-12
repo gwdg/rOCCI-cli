@@ -5,6 +5,9 @@ task :default => 'test'
 desc "Run all tests; includes rspec and coverage reports"
 task :test => 'rcov:all'
 
+desc "Run all tests; includes rspec and coverage reports"
+task :spec => 'test'
+
 Gem::Tasks.new(:build => {:tar => true, :zip => true}, :sign => {:checksum => true, :pgp => false})
 
 namespace :rcov do
