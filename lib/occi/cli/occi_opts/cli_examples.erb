@@ -22,9 +22,6 @@ occi --endpoint <%= ENDPOINT -%> --action describe --resource <%= res -%>
 ## Creating resources
 <% %w(compute network storage).each do |res| %>
 occi --endpoint <%= ENDPOINT -%> --action create [ --attribute attribute_name='attribute_value' ]+ [ --mixin mixin_type#mixin_term ]+ --resource <%= res -%>
-<% if res == 'compute' %>
-occi --endpoint <%= ENDPOINT -%> --action create [ --attribute attribute_name='attribute_value' ]+ [ --link /resource_type/instance_id ]+ --resource <%= res -%>
-<% end -%>
 <% end %>
 
 ## Linking/unlinking resources

@@ -176,7 +176,7 @@ module Occi::Cli
         opts.on("-j",
                 "--link URI",
                 Array,
-                "URI of an instance to be linked with the given resource, applicable for actions 'create' and 'link'") do |links|
+                "URI of an instance to be linked with the given resource, applicable only for action 'link'") do |links|
           options.links ||= []
 
           links.each do |link|
