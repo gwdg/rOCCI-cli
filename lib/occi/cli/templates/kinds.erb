@@ -6,8 +6,16 @@
 >> parent:     <%= kind.parent %>
 >> location:   <%= kind.location %>
 >> related to: <%= kind.related.join(', ') %>
-    <%- kind.attributes.names.each_pair do |attribute, value| -%>
-<%= attribute %> = <%= value %>
+
+Attributes:
+    <%- kind.attributes.names.each_pair do |attribute, properties| %>
+    [[ <%= attribute %> ]]
+    | type:        <%= properties.type %>
+    | required:    <%= properties.required %>
+    | mutable:     <%= properties.mutable %>
+    | default:     <%= properties.default %>
+    | description: <%= properties.description %>
+    | pattern:     <%= properties.pattern %>
     <%- end -%>
 
 Actions:
