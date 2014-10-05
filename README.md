@@ -1,18 +1,17 @@
 rOCCI-cli - A Ruby OCCI Framework
 =================================
 
-[![Build Status](https://secure.travis-ci.org/gwdg/rOCCI-cli.png)](http://travis-ci.org/gwdg/rOCCI-cli)
-[![Dependency Status](https://gemnasium.com/gwdg/rOCCI-cli.png)](https://gemnasium.com/gwdg/rOCCI-cli)
+[![Build Status](https://secure.travis-ci.org/EGI-FCTF/rOCCI-cli.png)](http://travis-ci.org/EGI-FCTF/rOCCI-cli)
+[![Dependency Status](https://gemnasium.com/EGI-FCTF/rOCCI-cli.png)](https://gemnasium.com/EGI-FCTF/rOCCI-cli)
 [![Gem Version](https://fury-badge.herokuapp.com/rb/occi-cli.png)](https://badge.fury.io/rb/occi-cli)
-[![Code Climate](https://codeclimate.com/github/gwdg/rOCCI-cli.png)](https://codeclimate.com/github/gwdg/rOCCI-cli)
+[![Code Climate](https://codeclimate.com/github/EGI-FCTF/rOCCI-cli.png)](https://codeclimate.com/github/EGI-FCTF/rOCCI-cli)
 
 Requirements
 ------------
 
 ### Ruby
-* Ruby 1.9.3 is required
+* Ruby 1.9.3 or newer is required
 * RubyGems have to be installed
-* Rake has to be installed (e.g., `gem install rake`)
 
 ### Examples
 #### For distros based on Debian:
@@ -46,12 +45,10 @@ Installation
 
 To install the most recent stable version
 
-    gem install rake
     gem install occi-cli
 
 To install the most recent beta version
 
-    gem install rake
     gem install occi-cli --pre
 
 ### From source (dev)
@@ -62,7 +59,7 @@ To install the most recent beta version
 
 To build and install the bleeding edge version from master
 
-    git clone git://github.com/gwdg/rOCCI-cli.git
+    git clone git://github.com/EGI-FCTF/rOCCI-cli.git
     cd rOCCI-cli
     gem install bundler
     bundle install
@@ -75,7 +72,7 @@ To build and install the bleeding edge version from master
 
 To build a Java jar file from master use
 
-    git clone git://github.com/gwdg/rOCCI-cli.git
+    git clone git://github.com/EGI-FCTF/rOCCI-cli.git
     cd rOCCI-cli
     gem install bundler
     bundle install
@@ -151,6 +148,11 @@ To delete a compute resource use
 Changelog
 ---------
 
+### Version 4.3
+* Updated dependencies
+* Powered by rOCCI-core 4.3.x
+* New `discover` functionality
+
 ### Version 4.2
 * Droppped the interactive mode (it might return in the future)
 * Updated internals
@@ -225,7 +227,7 @@ Development
 
 Checkout latest version from GIT:
 
-    git clone git://github.com/gwdg/rOCCI-cli.git
+    git clone git://github.com/EGI-FCTF/rOCCI-cli.git
 
 Change to rOCCI-cli folder
 
@@ -237,11 +239,11 @@ Install dependencies for deployment
 
 ### Code Documentation
 
-[Code Documentation for rOCCI-cli by YARD](http://rubydoc.info/github/gwdg/rOCCI-cli/)
+[Code Documentation for rOCCI-cli by YARD](http://rubydoc.info/github/EGI-FCTF/rOCCI-cli/)
 
 ### Continuous integration
 
-[Continuous integration for rOCCI-cli by Travis-CI](http://travis-ci.org/gwdg/rOCCI-cli/)
+[Continuous integration for rOCCI-cli by Travis-CI](http://travis-ci.org/EGI-FCTF/rOCCI-cli/)
 
 ### Contribute
 
