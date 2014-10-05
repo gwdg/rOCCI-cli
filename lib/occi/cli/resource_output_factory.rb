@@ -23,6 +23,8 @@ module Occi::Cli
         method = "links_to_#{@output_format}".to_sym
       elsif data.kind_of? Occi::Core::Mixins
         method = "mixins_to_#{@output_format}".to_sym
+      elsif data.kind_of? Occi::Core::Kinds
+        method = "kinds_to_#{@output_format}".to_sym
       elsif data.kind_of? Array
         raise Occi::Cli::Errors::FormatterInputTypeError,
               "Arrays with #{data.first.class.name.inspect} are not supported!" unless data.first.nil? || data.first.kind_of?(String)
@@ -139,6 +141,43 @@ module Occi::Cli
     def locations_to_plain(url_locations)
       url_locations.join("\n")
     end
+
+    def kinds_to_plain(occi_kinds)
+      # using ERB templates for known kinds
+      file = "#{File.expand_path('..', __FILE__)}/templates/kinds.erb"
+      template = ERB.new(File.new(file).read, nil, '-')
+
+      formatted_output = ""
+      formatted_output << template.result(binding) unless occi_kinds.blank?
+
+      formatted_output
+    end
+
+    def kinds_to_json(occi_kinds)
+      # generate JSON document from Occi::Core::Kinds
+      occi_kinds = occi_kinds.to_a
+
+      if @output_format.to_s.end_with? '_pretty'
+        output_first = "[\n"
+        output_ary = occi_kinds.collect do |r|
+          JSON.pretty_generate(r.as_json.to_hash)
+        end
+        separator = ",\n"
+        output_last = "\n]"
+      else
+        output_first = "["
+        output_ary = occi_kinds.collect do |r|
+          JSON.generate(r.as_json.to_hash)
+        end
+        separator = ","
+        output_last = "]"
+      end
+
+      "#{output_first}#{output_ary.join(separator)}#{output_last}"
+    end
+    alias_method :kinds_to_json_pretty, :kinds_to_json
+    alias_method :kinds_to_json_extended_pretty, :kinds_to_json
+    alias_method :kinds_to_json_extended, :kinds_to_json
 
   end
 

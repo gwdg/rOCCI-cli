@@ -55,7 +55,7 @@ begin
   connect :http, options
 rescue OpenSSL::SSL::SSLError => ssl_ex
   # generic SSL error raised whilst establishing a connection
-  # possibly an untrusted server cert or invalid user credentials 
+  # possibly an untrusted server cert or invalid user credentials
   Occi::Cli::Log.fatal "An SSL error occurred! Please, make sure your credentials " \
                   "are valid and recognized by the endpoint! Message: #{ssl_ex.message}"
 
@@ -146,6 +146,8 @@ begin
       helper_delete options, output
     when :trigger
       helper_trigger options, output
+    when :discover
+      helper_discover options, output
     when :refresh
       refresh
     when :skip, :test, :dry_run
