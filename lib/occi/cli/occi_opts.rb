@@ -11,9 +11,10 @@ module Occi::Cli
 
     AUTH_METHODS = [:x509, :basic, :digest, :none].freeze
     MEDIA_TYPES = ["application/occi+json", "text/plain,text/occi", "text/plain", "text/occi"].freeze
-    ACTIONS = [:list, :describe, :create, :delete, :trigger, :link, :unlink].freeze
+    ACTIONS = [:list, :describe, :create, :delete, :trigger, :link, :unlink, :discover].freeze
     LOG_OUTPUTS = [:stdout, :stderr].freeze
     LOG_LEVELS = [:debug, :error, :fatal, :info, :unknown, :warn].freeze
+    ENTITY_TYPES = [:resource, :link].freeze
 
     REQ_CREATE_ATTRS = ["occi.core.title"].freeze
 
@@ -197,6 +198,13 @@ module Occi::Cli
                 String,
                 "Action to be triggered on the resource, formatted as SCHEME#TERM or TERM") do |trigger_action|
           options.trigger_action = Occi::Cli::OcciOpts::Helper.parse_action(trigger_action)
+        end
+
+        opts.on("-i",
+                "--entity-type TYPE",
+                ENTITY_TYPES,
+                "Entity types to perform discovery on, only: [#{ENTITY_TYPES.join('|')}]") do |entity_type|
+          options.entity_type = entity_type
         end
 
         opts.on("-l",
@@ -387,7 +395,11 @@ module Occi::Cli
         mandatory << :links
       end
 
-      mandatory.concat [:resource, :action]
+      if options.action == :discover
+        mandatory.concat [:entity_type]
+      else
+        mandatory.concat [:resource, :action]
+      end
 
       mandatory
     end

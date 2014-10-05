@@ -1,0 +1,27 @@
+<%- # We always get Occi::Core::Kinds -%>
+<%- unless occi_kinds.blank? -%><%= '#' * (HighLine::SystemExtensions.terminal_size.first - 1) %><%- end %>
+<%- occi_kinds.each do |kind| -%>
+[[ <%= kind.type_identifier %> ]]
+>> title:      <%= kind.title %>
+>> parent:     <%= kind.parent %>
+>> location:   <%= kind.location %>
+>> related to: <%= kind.related.join(', ') %>
+
+Attributes:
+    <%- kind.attributes.names.each_pair do |attribute, properties| %>
+    [[ <%= attribute %> ]]
+    | type:        <%= properties.type %>
+    | required:    <%= properties.required %>
+    | mutable:     <%= properties.mutable %>
+    | default:     <%= properties.default %>
+    | description: <%= properties.description %>
+    | pattern:     <%= properties.pattern %>
+    <%- end -%>
+
+Actions:
+    <%- kind.actions.each do |action| %>
+    [[ <%= action.type_identifier %> ]]
+    <%- end -%>
+<%= '#' * (HighLine::SystemExtensions.terminal_size.first - 1) -%>
+
+<%- end -%>
