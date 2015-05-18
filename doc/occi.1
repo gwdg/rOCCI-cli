@@ -1,0 +1,213 @@
+.TH OCCI 1 "August 2014" "CESNET" "Ruby OCCI"
+
+
+.SH NAME
+occi \- Open Cloud Computing Interface Client
+
+
+.SH SYNOPSIS
+\fBocci\fR [\fIOPTIONS\fR]
+
+
+.SH DESCRIPTION
+Client implementation of the Open Cloud Computing Interface in Ruby.
+
+
+.SH OPTIONS
+.TP
+\fB-a\fR, \fP--action\fR \fIACTION\fR
+Action to be performed on a resource instance, required.
+
+.TP
+\fB-c\fR, \fP--ca-path\fR \fIPATH\fR [/etc/grid-security/certificates]
+Path to CA certificates director.
+
+.TP
+\fB-d\fR, \fP--debug\fR
+Enable debugging messages.
+
+.TP
+\fB-e\fR, \fP--endpoint\fR \fIURI\fR [http://localhost:3000]
+OCCI server URI.
+
+.TP
+\fB-g\fR, \fP--trigger-action\fR \fIACTION\fR
+Action to be triggered on the resource, formatted as SCHEME#TERM or TERM.
+
+.TP
+\fB-h\fR, \fP--help\fR
+Show this message.
+
+.TP
+\fB-j\fR, \fP--link\fR \fIURI\fR
+URI of an instance to be linked with the given resource, applicable only for action 'link'.
+
+.TP
+\fB-l\fR, \fP--log-to\fR \fIOUTPUT\fR [stderr]
+Log to the specified device, only: {\fBstdout\fR|\fBstderr\fR}.
+
+.TP
+\fB-M\fR, \fP--mixin\fR \fIIDENTIFIER\fR
+Identifier of a mixin, formatted as SCHEME#TERM or SHORT_SCHEME#TERM.
+
+.TP
+\fB-n\fR, \fP--auth\fR \fIMETHOD\fR [none]
+Authentication method. Only {\fBx509\fR|\fBbasic\fR|\fBdigest\fR|\fBnone\fR}.
+
+.TP
+\fB-f\fR, \fP--ca-file\fR \fIPATH\fR
+Path to CA certificates in a file.
+
+.TP
+\fB-F\fR, \fP--filter\fR \fICATEGORY\fR
+Category type identifier to filter categories from model. Must be used together with the \fB-m\fR option.
+
+.TP
+\fB-k\fR, \fP--timeout\fR \fITIMEOUT\fR
+Default timeout for all HTTP connections, in seconds.
+
+.TP
+\fB-m\fR, \fP--dump-model\fR
+Contact the endpoint and dump its model.
+
+.TP
+\fB-o, --output-format FORMAT\fR [plain]
+Output format, only: {\fBjson\fR|\fBplain\fR|\fBjson_pretty\fR|\fBjson_extended\fR|\fBjson_extended_pretty\fR}.
+
+.TP
+\fB-p\fR, \fP--password\fR \fIPASSWORD\fR
+Password for basic, digest and x509 authentication.
+
+.TP
+\fB-r\fR, \fP--resource\fR \fIRESOURCE\fR
+Term, identifier or URI of a resource to be queried, required.
+
+.TP
+\fB-t\fR, \fP--attribute\fR \fIATTRIBUTE\fR
+An "attribute='value'" pair, mandatory attributes for creating new resource instances: [occi.core.title].
+
+.TP
+\fB-T\fR, \fP--context\fR \fICTX_VAR\fR
+A "context_variable='value'" pair for new 'compute' resource instances, only: {\fBpublic_key\fR|\fBuser_data\fR}.
+
+.TP
+\fB-s\fR, \fP--skip-ca-check\fR
+Skip server certificate verification [NOT recommended].
+
+.TP
+\fB-u\fR, \fP--username\fR \fIUSER\fR [anonymous]
+Username for basic or digest authentication.
+
+.TP
+\fB-v\fR, \fP--version\fR
+Show version.
+
+.TP
+\fB-x\fR, \fP--user-cred\fR \fIFILE\fR [~/.globus/usercred.pem]
+Path to user's x509 credentials.
+
+.TP
+\fB-X\fR, \fP--voms\fR
+Using VOMS credentials; modifies behavior of the X509 authN module.
+
+.TP
+\fB-y\fR, \fP--media-type\fR \fIMEDIA_TYPE\fR [text/plain,text/occi]
+Media type for client <-> server communication. Only: {\fBapplication/occi+json\fR|\fBtext/plain\fR,\fBtext/occi\fR|\fBtext/plain\fR|\fBtext/occi\fR}.
+
+.TP
+\fB-z\fR, \fP--examples\fR
+Show usage examples.
+
+
+.SH
+EXAMPLES
+
+.SS Quick reference guide
+
+ occi --endpoint http://localhost:3000/ --action list --resource os_tpl
+ occi --endpoint http://localhost:3000/ --action list --resource resource_tpl
+ occi --endpoint http://localhost:3000/ --action describe --resource os_tpl#debian6
+ occi --endpoint http://localhost:3000/ --action create --resource compute --mixin os_tpl#debian6 --mixin resource_tpl#small --attribute occi.core.title="My rOCCI VM"
+ occi --endpoint http://localhost:3000/ --action delete --resource /compute/65sd4f654sf65g4-s5fg65sfg465sfg-sf65g46sf5g4sdfg
+
+.SS Listing resources
+
+ occi --endpoint http://localhost:3000/ --action list --resource compute
+ occi --endpoint http://localhost:3000/ --action list --resource network
+ occi --endpoint http://localhost:3000/ --action list --resource storage
+ occi --endpoint http://localhost:3000/ --action list --resource os_tpl
+ occi --endpoint http://localhost:3000/ --action list --resource resource_tpl
+
+.SS Describing resources
+
+ occi --endpoint http://localhost:3000/ --action describe --resource compute
+ occi --endpoint http://localhost:3000/ --action describe --resource network
+ occi --endpoint http://localhost:3000/ --action describe --resource storage
+ occi --endpoint http://localhost:3000/ --action describe --resource os_tpl
+ occi --endpoint http://localhost:3000/ --action describe --resource resource_tpl
+
+.SS Creating resources
+
+ occi --endpoint http://localhost:3000/ --action create [ --attribute attribute_name='attribute_value' ]+ [ --mixin mixin_type#mixin_term ]+ --resource compute
+ occi --endpoint http://localhost:3000/ --action create [ --attribute attribute_name='attribute_value' ]+ [ --mixin mixin_type#mixin_term ]+ --resource network
+ occi --endpoint http://localhost:3000/ --action create [ --attribute attribute_name='attribute_value' ]+ [ --mixin mixin_type#mixin_term ]+ --resource storage
+
+.SS Linking/unlinking resources
+
+ occi --endpoint http://localhost:3000/ --action link --resource /compute/instance_id --link /network/instance_id
+ occi --endpoint http://localhost:3000/ --action link --resource /compute/instance_id --link /storage/instance_id
+
+.SS Deleting resources
+
+ occi --endpoint http://localhost:3000/ --action delete --resource compute
+ occi --endpoint http://localhost:3000/ --action delete --resource network
+ occi --endpoint http://localhost:3000/ --action delete --resource storage
+
+.SS Triggering actions on resources
+
+ occi --endpoint http://localhost:3000/ --action trigger --trigger-action action_scheme#action_term [ --attribute attribute_name='attribute_value' ]+ --resource computeocci --endpoint http://localhost:3000/ --action trigger --trigger-action action_term [ --attribute attribute_name='attribute_value' ]+ --resource compute
+ occi --endpoint http://localhost:3000/ --action trigger --trigger-action action_scheme#action_term [ --attribute attribute_name='attribute_value' ]+ --resource networkocci --endpoint http://localhost:3000/ --action trigger --trigger-action action_term [ --attribute attribute_name='attribute_value' ]+ --resource network
+ occi --endpoint http://localhost:3000/ --action trigger --trigger-action action_scheme#action_term [ --attribute attribute_name='attribute_value' ]+ --resource storageocci --endpoint http://localhost:3000/ --action trigger --trigger-action action_term [ --attribute attribute_name='attribute_value' ]+ --resource storage
+
+.SS Authentication
+
+ occi --endpoint http://localhost:3000/ [ --auth none ]
+ occi --endpoint http://localhost:3000/ --auth basic [ --username user ] [ --password pass ]
+ occi --endpoint http://localhost:3000/ --auth digest [ --username user ] [ --password pass ]
+ occi --endpoint http://localhost:3000/ --auth x509 [ --user-cred /home/user/.globus/usercred.pem ] [ --ca-file /etc/grid-security/certificates/ca.pem ] [ --ca-path /etc/grid-security/certificates ] [ --voms ] [ --password pass ]
+ occi --endpoint http://localhost:3000/ --auth x509 --user-cred /home/user/.globus/usercred.pem
+ occi --endpoint http://localhost:3000/ --auth x509 --user-cred /tmp/x509_1000 --voms
+ occi --endpoint http://localhost:3000/ --auth x509 --user-cred /tmp/x509_1000 --ca-path /etc/grid-security/certificates --voms
+
+.SS Media types
+
+ occi --endpoint http://localhost:3000/ [ ... ] --media-type application/occi+json
+ occi --endpoint http://localhost:3000/ [ ... ] --media-type text/plain,text/occi
+ occi --endpoint http://localhost:3000/ [ ... ] --media-type text/plain
+ occi --endpoint http://localhost:3000/ [ ... ] --media-type text/occi
+
+.SS Output formats
+
+ occi --endpoint http://localhost:3000/ [ ... ] --output-format json
+ occi --endpoint http://localhost:3000/ [ ... ] --output-format plain
+ occi --endpoint http://localhost:3000/ [ ... ] --output-format json_pretty
+ occi --endpoint http://localhost:3000/ [ ... ] --output-format json_extended
+ occi --endpoint http://localhost:3000/ [ ... ] --output-format json_extended_pretty
+
+.SS Attribute values (type-casting)
+
+ occi --endpoint http://localhost:3000/ [ ... ] --attribute attribute_name='attribute_value'
+ occi --endpoint http://localhost:3000/ [ ... ] --attribute attribute_name='num(attribute_value)'
+ occi --endpoint http://localhost:3000/ [ ... ] --attribute attribute_name='float(attribute_value)'
+ occi --endpoint http://localhost:3000/ [ ... ] --attribute attribute_name='bool(attribute_value)'
+
+
+.SH BUGS
+Please report all bugs to EGI-TF rOCCI-cli issue tracker available at
+.I https://github.com/EGI-FCTF/rOCCI-cli/issues
+
+
+.SH AUTHORS
+EGI-FCTF, CESNET
+
+GWDG
