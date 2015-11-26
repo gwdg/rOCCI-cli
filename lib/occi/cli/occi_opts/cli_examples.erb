@@ -38,7 +38,7 @@ occi --endpoint <%= ENDPOINT -%> --action delete --resource <%= res -%>
 
 ## Triggering actions on resources
 <% %w(compute network storage).each do |res| %>
-occi --endpoint <%= ENDPOINT -%> --action trigger --trigger-action action_scheme#action_term [ --attribute attribute_name='attribute_value' ]+ --resource <%= res -%>
+occi --endpoint <%= ENDPOINT -%> --action trigger --trigger-action action_scheme#action_term [ --attribute attribute_name='attribute_value' ]+ --resource <%= res %>
 occi --endpoint <%= ENDPOINT -%> --action trigger --trigger-action action_term [ --attribute attribute_name='attribute_value' ]+ --resource <%= res -%>
 <% end %>
 
