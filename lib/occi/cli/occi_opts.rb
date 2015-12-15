@@ -9,7 +9,7 @@ module Occi::Cli
 
   class OcciOpts
 
-    AUTH_METHODS = [:x509, :basic, :digest, :none].freeze
+    AUTH_METHODS = [:x509, :token, :basic, :digest, :none].freeze
     MEDIA_TYPES = ["application/occi+json", "text/plain,text/occi", "text/plain", "text/occi"].freeze
     ACTIONS = [:list, :describe, :create, :delete, :trigger, :link, :unlink, :discover].freeze
     LOG_OUTPUTS = [:stdout, :stderr].freeze
@@ -119,6 +119,15 @@ module Occi::Cli
                 "Using VOMS credentials; modifies behavior of the X509 authN module") do |voms|
 
           options.auth.voms = true
+        end
+
+        opts.on("-q",
+                "--token TOKEN",
+                String,
+                "A pre-generated token to be used for authentication purposes") do |token|
+          raise ArgumentError, "Token cannot be blank!" if token.blank?
+
+          options.auth.token = token
         end
 
         opts.on("-y",

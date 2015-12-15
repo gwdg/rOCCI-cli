@@ -21,6 +21,8 @@ require 'highline/import'
 
 require 'occi-cli'
 
+NONPASS_AUTHS = %w(none token).freeze
+
 # get arguments and validate/parse them to an ostruct
 options = Occi::Cli::OcciOpts.parse ARGV
 
@@ -42,7 +44,7 @@ if options.auth[:password].nil? || options.auth[:user_cert_password].nil?
 
   options.auth[:user_cert_password] = ask("Enter a password: ") {
       |q| q.echo = '*'
-  } unless options.auth[:type] == "none" || (options.auth[:voms] && options.auth[:type] == "x509")
+  } unless NONPASS_AUTHS.include?(options.auth[:type]) || (options.auth[:voms] && options.auth[:type] == "x509")
 
   options.auth[:password] = options.auth[:user_cert_password]
 end
