@@ -113,7 +113,8 @@ module Occi::Cli::Helpers::CreateHelper
 
       case var
       when 'public_key', :public_key
-        res.attributes['org.openstack.credentials.publickey.name'] = 'Public SSH key'
+        # Not setting `publickey.name` to avoid conflicts with already registered keys
+        # res.attributes['org.openstack.credentials.publickey.name'] = 'Public SSH key'
         res.attributes['org.openstack.credentials.publickey.data'] = val
       when 'user_data', :user_data
         res.attributes['org.openstack.compute.user_data'] = val
