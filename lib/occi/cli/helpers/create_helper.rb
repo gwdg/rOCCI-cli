@@ -1,5 +1,7 @@
 module Occi::Cli::Helpers::CreateHelper
 
+  MIN_TIMEOUT = 5
+
   def helper_create(options, output = nil)
     location = nil
 
@@ -43,8 +45,25 @@ module Occi::Cli::Helpers::CreateHelper
     #res.check
 
     Occi::Cli::Log.debug "Creating #{options.resource.inspect}: #{res.inspect}"
+    new_link = create(res)
+    helper_create_wait(new_link, options.wait_for_active) if options.wait_for_active > 0
 
-    create res
+    new_link
+  end
+
+  def helper_create_wait(resource_link, timeout)
+    begin
+      Timeout::timeout(timeout) {
+        Occi::Cli::Log.debug "Starting #{timeout}s wait period for #{resource_link.inspect} to become active"
+        while true
+          desrc = describe(resource_link).first
+          break if !desrc.respond_to?(:state) || desrc.state == 'active'
+          sleep MIN_TIMEOUT
+        end
+      }
+    rescue Timeout::Error
+      Occi::Cli::Log.warn "Attempted to wait #{timeout}s for #{resource_link.inspect} to become active"
+    end
   end
 
   def helper_create_attach_links(options, res)
