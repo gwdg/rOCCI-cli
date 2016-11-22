@@ -23,5 +23,13 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'json', '~> 1.8', '>= 1.8.1'
   gem.add_dependency 'highline', '~> 1.6', '>= 1.6.21'
 
+  gem.add_development_dependency 'bundler', '~> 1.12'
+  gem.add_development_dependency 'rake', '~> 11.0'
+  gem.add_development_dependency 'rspec', '~> 3.4'
+  gem.add_development_dependency 'simplecov', '~> 0.11'
+  gem.add_development_dependency 'pry', '~> 0.10'
+  gem.add_development_dependency 'rubygems-tasks', '~> 0.2'
+  gem.add_development_dependency 'yard', '~> 0.8'
+
   gem.required_ruby_version = ">= 1.9.3"
 end

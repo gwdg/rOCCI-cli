@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'occi-api'
+require 'timeout'
 
 module Occi::Cli; end
 

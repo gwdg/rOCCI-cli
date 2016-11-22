@@ -240,6 +240,14 @@ module Occi::Cli
           end
         end
 
+        opts.on("-w",
+                "--wait-for-active TIMEOUT",
+                Integer,
+                "Wait for TIMEOUT seconds for the created resource to become 'active' before returning, " \
+                "defaults to 0 seconds (will be interpreted as 'disabled')") do |wait_for_active|
+          options.wait_for_active = wait_for_active
+        end
+
         opts.on_tail("-z",
                      "--examples",
                      "Show usage examples") do |examples|
@@ -329,6 +337,7 @@ module Occi::Cli
 
       options.endpoint = "http://localhost:3000"
       options.timeout = nil
+      options.wait_for_active = 0
 
       options.auth = {}
       options.auth.type = "none"
