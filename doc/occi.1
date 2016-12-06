@@ -103,6 +103,10 @@ Username for basic or digest authentication.
 Show version.
 
 .TP
+\fB-w\fR, \fP--wait-for-active\fR \fITIMEOUT\fR [0]
+Wait for \fITIMEOUT\fR seconds for the created resource to become 'active' before returning. Defaults to \fB0\fR seconds (will be interpreted as 'disabled').
+
+.TP
 \fB-x\fR, \fP--user-cred\fR \fIFILE\fR [~/.globus/usercred.pem]
 Path to user's x509 credentials.
 
