@@ -1,6 +1,7 @@
 module Occi::Cli::Helpers::CreateHelper
 
   MIN_TIMEOUT = 5
+  WAIT_FOR_STATES = %w(active online).freeze
 
   def helper_create(options, output = nil)
     location = nil
@@ -57,7 +58,7 @@ module Occi::Cli::Helpers::CreateHelper
         Occi::Cli::Log.debug "Starting #{timeout}s wait period for #{resource_link.inspect} to become active"
         while true
           desrc = describe(resource_link).first
-          break if !desrc.respond_to?(:state) || desrc.state == 'active'
+          break if !desrc.respond_to?(:state) || WAIT_FOR_STATES.include?(desrc.state)
           sleep MIN_TIMEOUT
         end
       }
