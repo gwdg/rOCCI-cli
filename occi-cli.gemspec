@@ -19,17 +19,18 @@ Gem::Specification.new do |gem|
   gem.test_files    = `git ls-files -- {test,spec}/*`.split("\n")
   gem.require_paths = ['lib']
 
-  gem.add_dependency 'occi-api', '~> 4.3', '>= 4.3.6'
-  gem.add_dependency 'json', '~> 1.8', '>= 1.8.1'
-  gem.add_dependency 'highline', '~> 1.6', '>= 1.6.21'
+  gem.add_dependency 'occi-api', '>= 4.3.8', '< 5'
+  gem.add_dependency 'json', '>= 1.8.1', '< 3'
+  gem.add_dependency 'highline', '>= 1.6.21', '< 2'
 
-  gem.add_development_dependency 'bundler', '~> 1.12'
-  gem.add_development_dependency 'rake', '~> 11.0'
-  gem.add_development_dependency 'rspec', '~> 3.4'
-  gem.add_development_dependency 'simplecov', '~> 0.11'
-  gem.add_development_dependency 'pry', '~> 0.10'
-  gem.add_development_dependency 'rubygems-tasks', '~> 0.2'
-  gem.add_development_dependency 'yard', '~> 0.8'
+  gem.add_development_dependency 'bundler', '>= 1.12', '< 2'
+  gem.add_development_dependency 'rubygems-tasks', '>= 0.2.4', '< 1'
+  gem.add_development_dependency 'rspec', '>= 3.5.0', '< 4'
+  gem.add_development_dependency 'rake', '>= 12', '< 13'
+  gem.add_development_dependency 'simplecov', '>= 0.13', '< 1'
+  gem.add_development_dependency 'yard', '>= 0.9.8', '< 1'
+  gem.add_development_dependency 'yard-rspec', '>= 0.1', '< 1'
+  gem.add_development_dependency 'pry', '>= 0.10.4', '< 1'
 
   gem.required_ruby_version = ">= 1.9.3"
 end
