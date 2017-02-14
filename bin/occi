@@ -150,6 +150,8 @@ begin
       helper_trigger options, output
     when :discover
       helper_discover options, output
+    when :update
+      helper_update options, output
     when :refresh
       refresh
     when :skip, :test, :dry_run
