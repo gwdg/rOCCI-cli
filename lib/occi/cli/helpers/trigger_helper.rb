@@ -12,14 +12,16 @@ module Occi::Cli::Helpers::TriggerHelper
     action_instance.action = helper_trigger_normalize_action(options.trigger_action)
     action_instance.attributes = options.attributes
 
-    if trigger(options.resource, action_instance)
-      Occi::Cli::Log.info "Action #{options.trigger_action.type_identifier.inspect} " \
-                     "triggered on #{options.resource.inspect}!"
-    else
+    res = trigger(options.resource, action_instance)
+    unless res
       message = "Failed to trigger an action on #{options.resource.inspect}!"
       Occi::Cli::Log.error message
       raise message
     end
+    Occi::Cli::Log.info "Action #{options.trigger_action.type_identifier.inspect} " \
+                        "triggered on #{options.resource.inspect}!"
+    return res unless output
+    puts output.format(res.to_a.collect { |m| m.type_identifier }) if res.kind_of? Occi::Core::Mixins
 
     true
   end

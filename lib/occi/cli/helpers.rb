@@ -12,3 +12,4 @@ extend Occi::Cli::Helpers::DeleteHelper
 extend Occi::Cli::Helpers::TriggerHelper
 extend Occi::Cli::Helpers::LinkHelper
 extend Occi::Cli::Helpers::DiscoverHelper
+extend Occi::Cli::Helpers::UpdateHelper
