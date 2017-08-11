@@ -21,7 +21,7 @@ require 'highline/import'
 
 require 'occi-cli'
 
-NONPASS_AUTHS = %w(none token).freeze
+NONPASS_AUTHS = %w(none token oauth2).freeze
 
 # get arguments and validate/parse them to an ostruct
 options = Occi::Cli::OcciOpts.parse ARGV
