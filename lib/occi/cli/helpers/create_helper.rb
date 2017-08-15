@@ -82,6 +82,11 @@ module Occi::Cli::Helpers::CreateHelper
       elsif link.include? "/network/"
         Occi::Cli::Log.debug "Adding networkinterface to #{options.resource.inspect}"
         res.networkinterface link
+      elsif link.include? "/securitygroup/"
+        Occi::Cli::Log.debug "Adding securitygrouplink to #{options.resource.inspect}"
+        kind = 'http://schemas.ogf.org/occi/infrastructure#securitygrouplink'
+        sec_grp_kind = 'http://schemas.ogf.org/occi/infrastructure#securitygroup'
+        res.link link, kind, [], Occi::Core::Attributes.new, sec_grp_kind
       else
         raise "Unknown link type #{link.inspect}, stopping here!"
       end
