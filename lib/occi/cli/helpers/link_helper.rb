@@ -28,12 +28,15 @@ module Occi::Cli::Helpers::LinkHelper
     raise "No valid links given!" if link.blank?
 
     case link
-    when /\/network\//
+    when /\/network\//, /\/ipreservation\//
       link_kind = model.get_by_id("http://schemas.ogf.org/occi/infrastructure#networkinterface")
       raise "#{options.endpoint.inspect} does not support networkinterface links!" unless link_kind
     when /\/storage\//
       link_kind = model.get_by_id("http://schemas.ogf.org/occi/infrastructure#storagelink")
       raise "#{options.endpoint.inspect} does not support storagelink links!" unless link_kind
+    when /\/securitygroup\//
+      link_kind = model.get_by_id("http://schemas.ogf.org/occi/infrastructure#securitygrouplink")
+      raise "#{options.endpoint.inspect} does not support securitygroup links!" unless link_kind
     else
       raise "Unknown link target #{link.inspect}! Only network and storage targets are supported!"
     end
